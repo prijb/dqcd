@@ -171,6 +171,55 @@ class DQCDMuonSVSelectionRDFProducer():
 def DQCDMuonSVSelectionRDF(*args, **kwargs):
     return lambda: DQCDMuonSVSelectionRDFProducer(*args, **kwargs)
 
+#Scouting should be able to use the same DQCDMuonSVSelectionRDF function but now with OS collections
+class DQCDMuonSVSelectionScoutingRDFProducer(DQCDMuonSVSelectionRDFProducer):
+    #Overwrite run method
+    def run(self, df):
+        muonSV_vars = ["mass", "chi2", "ndof", "origMass", "pAngle", "dlen", "dlenSig", "dxy", "dxySig", "mu1pt", "mu1phi", "mu1eta", "mu1index",
+         "mu2pt", "mu2eta", "mu2phi", "mu2index", "x", "y", "z"]
+        #Loop over to define OS muonSVs
+        for var in muonSV_vars:
+            muonSV_var_base = "muonSV_" + var
+            muonSV_var_new = "muonSV_OS_" + var
+            df = df.Define(muonSV_var_new, "%s[muonSV_charge==0]"%(muonSV_var_base))
+
+        #df = df.Filter("nmuonSV > 0")
+        df = df.Define("nmuonSV_OS", "muonSV_OS_mass.size()")
+        df = df.Filter("nmuonSV_OS > 0")
+
+        sigma = self.gen_mass * 0.01
+        df = df.Define("nmuonSV_OS_3sigma",
+            f"muonSV_OS_mass[abs(muonSV_OS_mass - {self.gen_mass}) < 3 * {sigma}].size()")
+
+        df = df.Define("multivertices_vars", """get_multivertices(nmuonSV_OS, muonSV_OS_mass, muonSV_OS_chi2,
+            muonSV_OS_mu1eta, muonSV_OS_mu1phi, muonSV_OS_mu2eta, muonSV_OS_mu2phi,
+            muonSV_OS_mu1index, muonSV_OS_mu2index)""")
+        df = df.Define("mass_multivertices", "multivertices_vars.mass")
+        df = df.Define("chi2_multivertices", "multivertices_vars.chi2")
+        df = df.Define("indexes_multivertices", "multivertices_vars.indexes")
+
+        # chi2_multivertices should have at least 1 element
+        df = df.Filter("chi2_multivertices.size() > 0")
+
+        df = df.Define("cat_index", "int(mass_multivertices.size() / 2)")
+
+        df = df.Define("min_chi2", "Min(chi2_multivertices)")
+        df = df.Define("min_chi2_index", "indexes_multivertices[ArgMin(chi2_multivertices)]")
+
+        df = df.Define("muonSV_OS_dR", "get_deltaR("
+            "nmuonSV_OS, muonSV_OS_mu1eta, muonSV_OS_mu1phi, muonSV_OS_mu2eta, muonSV_OS_mu2phi)")
+        # df = df.Filter("muonSV_OS_dR.at(min_chi2_index) < 1.2")
+        df = df.Filter("ROOT::VecOps::Sum(muonSV_OS_dR[muonSV_OS_dR < 1.2]) > 0")
+
+        # return df, []
+
+        return df, ["nmuonSV_OS_3sigma",
+            "mass_multivertices", "chi2_multivertices", "indexes_multivertices",
+            "min_chi2", "min_chi2_index", "cat_index", "muonSV_OS_dR"]
+
+def DQCDMuonSVSelectionScoutingRDF(*args, **kwargs):
+    return lambda: DQCDMuonSVSelectionScoutingRDFProducer(*args, **kwargs)
+
 
 class DQCDMuonSVRDFProducer():
     def __init__(self, *args, **kwargs):

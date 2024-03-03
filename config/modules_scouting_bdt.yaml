@@ -1,0 +1,31 @@
+#yaml for the analysis workflow using our muonSV collections and BDT
+muon:
+    name: DQCDMuonSelectionScoutingRDF
+    path: modules.muon_selection
+    parameters:
+        year: self.config.year
+
+
+muonsv:
+    name: DQCDMuonSVSelectionScoutingRDF
+    path: modules.muonsv_selection
+    parameters:
+        gen_mass: 2
+
+
+#Change name to DQCDScoutingTestBDT for parking trained BDT on Scouting data
+#DQCDScoutingBDT is the scouting version
+bdt_inference_a:
+    name: DQCDScoutingBDT
+    path: DQCD.Modules.BDTULinference
+    parameters:
+        isMC: self.dataset.process.isMC
+        scenario: A
+
+
+#trig:
+#    name: DQCDTriggerSelectionRDF
+#    path: modules.muonsv_selection
+#    parameters:
+#        gen_mass: 2
+
