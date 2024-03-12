@@ -185,7 +185,7 @@ class DQCDMuonSVSelectionScoutingRDFProducer(DQCDMuonSVSelectionRDFProducer):
 
         #df = df.Filter("nmuonSV > 0")
         df = df.Define("nmuonSV_OS", "muonSV_OS_mass.size()")
-        df = df.Filter("nmuonSV_OS > 0")
+        df = df.Filter("nmuonSV_OS > 0", "At least one muonSV")
 
         sigma = self.gen_mass * 0.01
         df = df.Define("nmuonSV_OS_3sigma",
@@ -194,28 +194,37 @@ class DQCDMuonSVSelectionScoutingRDFProducer(DQCDMuonSVSelectionRDFProducer):
         df = df.Define("multivertices_vars", """get_multivertices(nmuonSV_OS, muonSV_OS_mass, muonSV_OS_chi2,
             muonSV_OS_mu1eta, muonSV_OS_mu1phi, muonSV_OS_mu2eta, muonSV_OS_mu2phi,
             muonSV_OS_mu1index, muonSV_OS_mu2index)""")
+        #Everything stored here (including indices) will use the index of the muonSV_OS collection, not muonSV
         df = df.Define("mass_multivertices", "multivertices_vars.mass")
         df = df.Define("chi2_multivertices", "multivertices_vars.chi2")
         df = df.Define("indexes_multivertices", "multivertices_vars.indexes")
 
-        # chi2_multivertices should have at least 1 element
-        df = df.Filter("chi2_multivertices.size() > 0")
+        # chi2_multivertices should have at least 1 element -> At least single vertex catgeory
+        df = df.Filter("chi2_multivertices.size() > 0", "At least one chi2 multivertices element")
 
+        #If it's multivertex, this should be 1 (or higher unless cleaning restricts it to 1)
         df = df.Define("cat_index", "int(mass_multivertices.size() / 2)")
 
+        #Get the lowest chi2 vertex index (again wrt muonSV_OS)
         df = df.Define("min_chi2", "Min(chi2_multivertices)")
         df = df.Define("min_chi2_index", "indexes_multivertices[ArgMin(chi2_multivertices)]")
 
         df = df.Define("muonSV_OS_dR", "get_deltaR("
             "nmuonSV_OS, muonSV_OS_mu1eta, muonSV_OS_mu1phi, muonSV_OS_mu2eta, muonSV_OS_mu2phi)")
         # df = df.Filter("muonSV_OS_dR.at(min_chi2_index) < 1.2")
-        df = df.Filter("ROOT::VecOps::Sum(muonSV_OS_dR[muonSV_OS_dR < 1.2]) > 0")
+        df = df.Filter("ROOT::VecOps::Sum(muonSV_OS_dR[muonSV_OS_dR < 1.2]) > 0", "muonSV deltaR cut")
 
         # return df, []
 
+        #Modified to add OS branches since multivertex indices use them
         return df, ["nmuonSV_OS_3sigma",
             "mass_multivertices", "chi2_multivertices", "indexes_multivertices",
-            "min_chi2", "min_chi2_index", "cat_index", "muonSV_OS_dR"]
+            "min_chi2", "min_chi2_index", "cat_index", "muonSV_OS_dR", 
+            "muonSV_OS_mu1pt", "muonSV_OS_mu1eta", "muonSV_OS_mu1phi",
+            "muonSV_OS_mu2pt", "muonSV_OS_mu2eta", "muonSV_OS_mu2phi",
+            "muonSV_OS_chi2", "muonSV_OS_pAngle", "muonSV_OS_dlen", "muonSV_OS_dlenSig",
+            "muonSV_OS_dxy", "muonSV_OS_dxySig", "muonSV_OS_x", "muonSV_OS_y", "muonSV_OS_y",
+            "muonSV_OS_mass"]
 
 def DQCDMuonSVSelectionScoutingRDF(*args, **kwargs):
     return lambda: DQCDMuonSVSelectionScoutingRDFProducer(*args, **kwargs)
@@ -437,3 +446,47 @@ class DummyMinChi2RDFProducer():
 
 def DummyMinChi2RDF(*args, **kwargs):
     return lambda: DummyMinChi2RDFProducer()
+
+
+class DummyMinChi2ScoutingRDFProducer():
+
+    def run(self, df):
+        branches = [
+            "muon1_sv_bestchi2_pt",
+            "muon1_sv_bestchi2_eta",
+            "muon1_sv_bestchi2_phi",
+            "muon1_sv_bestchi2_mass",
+            "muon2_sv_bestchi2_pt",
+            "muon2_sv_bestchi2_eta",
+            "muon2_sv_bestchi2_phi",
+            "muon2_sv_bestchi2_mass",
+            "muonSV_bestchi2_chi2",
+            "muonSV_bestchi2_pAngle",
+            "muonSV_bestchi2_dlen",
+            "muonSV_bestchi2_dlenSig",
+            "muonSV_bestchi2_dxy",
+            "muonSV_bestchi2_dxySig",
+            "muonSV_bestchi2_x",
+            "muonSV_bestchi2_y",
+            "muonSV_bestchi2_z",
+            "muonSV_bestchi2_mass"
+        ]
+        #The best chi2 definition here should use the muonSV_OS collection
+        df = df.Define("muon1_sv_bestchi2_pt", "muonSV_OS_mu1pt.at(min_chi2_index)")
+        df = df.Define("muon1_sv_bestchi2_eta", "muonSV_OS_mu1eta.at(min_chi2_index)")
+        df = df.Define("muon1_sv_bestchi2_phi", "muonSV_OS_mu1phi.at(min_chi2_index)")
+        df = df.Define("muon1_sv_bestchi2_mass", "0.1057")
+        df = df.Define("muon2_sv_bestchi2_pt", "muonSV_OS_mu2pt.at(min_chi2_index)")
+        df = df.Define("muon2_sv_bestchi2_eta", "muonSV_OS_mu2eta.at(min_chi2_index)")
+        df = df.Define("muon2_sv_bestchi2_phi", "muonSV_OS_mu2phi.at(min_chi2_index)")
+        df = df.Define("muon2_sv_bestchi2_mass", "0.1057")
+
+        for v in ["chi2", "pAngle", "dlen", "dlenSig", "dxy", "dxySig", "x", "y", "z", "mass"]:
+            df = df.Define("muonSV_bestchi2_%s" % v, "muonSV_OS_%s.at(min_chi2_index)" % v)
+            branches.append("muonSV_bestchi2_%s" % v)
+
+        return df, branches
+
+
+def DummyMinChi2ScoutingRDF(*args, **kwargs):
+    return lambda: DummyMinChi2ScoutingRDFProducer()

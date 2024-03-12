@@ -166,7 +166,7 @@ class DQCDMuonSelectionScoutingRDFProducer():
         df = df.Define("Muon_isMuonWithEtaAndPtReq", """(Muon_pt > 3.) && (abs(Muon_eta) < 2.4)""")
 
         # filtering to have two muons passing this cut
-        df = df.Filter("Muon_pt[Muon_isMuonWithEtaAndPtReq == 1].size() > 1")
+        df = df.Filter("Muon_pt[Muon_isMuonWithEtaAndPtReq == 1].size() > 1", ">= 2 pT>3 and |eta|<2.4 muons")
 
         # trigger flag
         if (self.year == 2022):
@@ -181,7 +181,7 @@ class DQCDMuonSelectionScoutingRDFProducer():
         elif (self.year == 2023):
             df = df.Define("ScoutingMuonTrigger_flag", "DST_Run3_DoubleMu3_PFScoutingPixelTracking")
 
-        df = df.Filter("ScoutingMuonTrigger_flag > 0")
+        df = df.Filter("ScoutingMuonTrigger_flag > 0", "Pass Scouting triggers")
 
 
         df = df.Define("leading", "get_leading_elems(Muon_pt)").Define(

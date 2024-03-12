@@ -23,6 +23,35 @@ bdt_inference_a:
         scenario: A
 
 
+#These are for cutflows
+#bdt_selection_vloose:
+#    name: DQCDBDTSelectionRDF
+#    path: modules.bdt_selection
+#    parameters:
+#        bdt_name: bdt_scenarioA
+#        bdt_cut_value: 0.3 
+
+#bdt_selection_loose:
+#    name: DQCDBDTSelectionRDF
+#    path: modules.bdt_selection
+#    parameters:
+#        bdt_name: bdt_scenarioA
+#        bdt_cut_value: 0.6 
+
+#bdt_selection_medium:
+#    name: DQCDBDTSelectionRDF
+#    path: modules.bdt_selection
+#    parameters:
+#        bdt_name: bdt_scenarioA
+#        bdt_cut_value: 0.7 
+
+#bdt_selection_tight:
+#    name: DQCDBDTSelectionRDF
+#    path: modules.bdt_selection
+#    parameters:
+#        bdt_name: bdt_scenarioA
+#        bdt_cut_value: 0.98 
+
 #trig:
 #    name: DQCDTriggerSelectionRDF
 #    path: modules.muonsv_selection
