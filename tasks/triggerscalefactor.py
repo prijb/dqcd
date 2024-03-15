@@ -1471,6 +1471,237 @@ class TriggerSFtnpRknew(TriggerSF):
             histo.Write()
         histo_file.Close()
 
+#It has the same base features of the TriggerSF class
+class TriggerSFMod(TriggerSF):
+    #Inherits the standard workflow from TriggerSF
+    def add_to_root(self, root):
+        root.gInterpreter.Declare("""
+            #include <utility>
+            #include "DataFormats/Math/interface/deltaR.h"
+            #include <cmath>
+
+            bool chi2sort (const std::pair<int, float>& a, const std::pair<int, float>& b)
+            {
+              return (a.second < b.second);
+            }
+
+            using Vfloat = const ROOT::RVec<float>&;
+            using Vint = const ROOT::RVec<int>&;
+
+            //ROOT based pval calculation
+            ROOT::RVec<float> getpvalue(Vfloat muonSV_chi2, Vfloat muonSV_ndof)
+            {
+                ROOT::RVec<float> muonSV_pvalue{};
+                for(unsigned i=0; i<muonSV_chi2.size(); i++){
+                    //Using a TMath function
+                    float pvalue = TMath::Prob(muonSV_chi2.at(i), muonSV_ndof.at(i));
+                    muonSV_pvalue.push_back(pvalue);
+                }
+                return muonSV_pvalue;
+            }
+
+            //Gets the pair of the tag and probe muon indices
+            std::pair<int, int> get_tag_probe_index(Vint muonSV_mu1index, Vint muonSV_mu2index, 
+            Vfloat muonSV_z, Vfloat PV_z,
+            Vfloat Muon_dxy, Vfloat Muon_dxyErr, Vfloat Muon_pt, Vfloat Muon_eta, Vfloat Muon_phi, ROOT::RVec<bool> Muon_tightId, 
+            Vfloat MuonBPark_pt, Vfloat MuonBPark_eta, Vfloat MuonBPark_phi, Vint MuonBPark_fired_HLT_Mu9_IP6,
+            Vfloat TrigObjBPark_l1pt, Vfloat TrigObjBPark_eta, Vfloat TrigObjBPark_phi, Vfloat TrigObjBPark_l1dR
+            )
+            {
+                //ROOT::RVec<float> TrigObjBPark_l1dR
+                int tag_index = -1;
+                int probe_index = -1;
+                ROOT::RVec<int> tag_index_candidates{};
+                ROOT::RVec<int> probe_index_candidates{};
+                int mu1index = muonSV_mu1index.at(0);
+                int mu2index = muonSV_mu2index.at(0);
+                ROOT::RVec<int> mu_indices{mu1index, mu2index};
+
+                //Do tag check for each muon index
+                for(int mu_index: mu_indices){
+                    //Muon kinematics
+                    if(TMath::Abs(muonSV_z.at(0) - PV_z.at(0)) > 0.5) continue;
+                    if(TMath::Abs(Muon_dxy.at(mu_index)/Muon_dxyErr.at(mu_index)) < 8.) continue;
+                    if(Muon_pt.at(mu_index) < 10.) continue;
+                    if(!Muon_tightId.at(mu_index)) continue;
+
+                    //Check if the muon can be matched to a trigger muon
+                    bool match_hlt_muon = false;          
+                    
+                    //Changed so that only the MuonBPark with the closest dR is considered
+                    int closest_muonbpark = -1;
+                    float closest_muonbpark_dr = 999.;
+            
+                    for(unsigned i=0; i<MuonBPark_eta.size(); i++){
+                        float dR = reco::deltaR(Muon_eta.at(mu_index), Muon_phi.at(mu_index), MuonBPark_eta.at(i), MuonBPark_phi.at(i));
+                        
+                        if((dR < closest_muonbpark_dr) && (dR < 0.2)){
+                            closest_muonbpark = i;
+                            closest_muonbpark_dr = dR;
+                        }                        
+                    }
+
+                    //Only check closest MuonBPark and if it exists and is triggering, match
+                    if(closest_muonbpark > -1){
+                        if(MuonBPark_fired_HLT_Mu9_IP6.at(closest_muonbpark) == 1) match_hlt_muon=true;
+                    }
+                    if(!match_hlt_muon) continue;
+
+                    bool match_l1_muon = false;
+
+                    //Now match muon with a trigger muon (TrigObjBPark) which is also matched to its L1 object
+                    for(unsigned j=0; j<TrigObjBPark_l1pt.size(); j++){
+                        if(TrigObjBPark_l1pt.at(j) < 10.) continue;
+                        float dR = reco::deltaR(Muon_eta.at(mu_index), Muon_phi.at(mu_index), TrigObjBPark_eta.at(j), TrigObjBPark_phi.at(j));
+
+                        if(dR > 0.05) continue;
+                        //Then check if the associated HLT object is matched to the L1 object
+                        if(TrigObjBPark_l1dR.at(j) < 0.05) match_l1_muon = true;
+                    }
+                    if(!match_l1_muon) continue;
+
+                    tag_index_candidates.push_back(mu_index);
+                    //Return the other index as a probe candidate (only one of these ifs should be true)
+                    //if(mu1index != mu_index) probe_index_candidates.push_back(mu1index);
+                    //if(mu2index != mu_index) probe_index_candidates.push_back(mu2index);
+                }
+                //Populate probe candidates index based on whether the other muon is a valid tag
+                if(std::find(tag_index_candidates.begin(), tag_index_candidates.end(), mu1index) != tag_index_candidates.end()) probe_index_candidates.push_back(mu2index);
+                if(std::find(tag_index_candidates.begin(), tag_index_candidates.end(), mu2index) != tag_index_candidates.end()) probe_index_candidates.push_back(mu1index);
+
+                //Find best tag and probe index
+                if(tag_index_candidates.size()==1){
+                    tag_index = tag_index_candidates.at(0);
+                    probe_index = probe_index_candidates.at(0);
+                }
+                if(tag_index_candidates.size()==2){
+                    tag_index = (Muon_pt.at(tag_index_candidates.at(0)) > Muon_pt.at(tag_index_candidates.at(0))) ? tag_index_candidates.at(0) : tag_index_candidates.at(1);
+                    probe_index = (Muon_pt.at(tag_index_candidates.at(0)) > Muon_pt.at(tag_index_candidates.at(0))) ? probe_index_candidates.at(0) : probe_index_candidates.at(1);
+                }
+                
+                std::pair<int, int> tag_and_probe_pair;
+                tag_and_probe_pair.first = tag_index;
+                tag_and_probe_pair.second = probe_index; 
+                return tag_and_probe_pair;
+            }
+        
+            //Check if the probe passes
+            bool pass_probe(int probe_index, Vfloat Muon_pt, Vfloat Muon_eta, Vfloat Muon_phi, ROOT::RVec<bool> Muon_mediumId,
+            Vfloat MuonBPark_pt, Vfloat MuonBPark_eta, Vfloat MuonBPark_phi, Vint MuonBPark_fired_HLT_Mu9_IP6,
+            Vfloat TrigObjBPark_eta, Vfloat TrigObjBPark_phi)
+            {
+                bool pass = false;
+                bool match_hlt_muon = false;
+                int closest_muonbpark = -1;
+                float closest_muonbpark_dr = 999.;
+
+                
+                //Changed so that only the MuonBPark with the closest dR is considered
+                for(unsigned i=0; i<MuonBPark_eta.size(); i++){
+                    float dR = reco::deltaR(Muon_eta.at(probe_index), Muon_phi.at(probe_index), MuonBPark_eta.at(i), MuonBPark_phi.at(i));
+                    
+                    if((dR < closest_muonbpark_dr) && (dR < 0.2)){
+                        closest_muonbpark = i;
+                        closest_muonbpark_dr = dR;
+                    }
+                }
+
+                //Only check closest MuonBPark and if it exists and is triggering, match
+                if(closest_muonbpark > -1){
+                    if(MuonBPark_fired_HLT_Mu9_IP6.at(closest_muonbpark) == 1) match_hlt_muon=true;
+                }                
+
+                //This matches the probe muon with an HLT muon (is this even necessary?)
+                bool match_l1_muon = false;
+                for(unsigned j=0; j<TrigObjBPark_eta.size(); j++){
+                    float dR = reco::deltaR(Muon_eta.at(probe_index), Muon_phi.at(probe_index), TrigObjBPark_eta.at(j), TrigObjBPark_phi.at(j));
+                    if(dR < 0.2) match_l1_muon = true;
+                }
+                
+                if(match_hlt_muon && Muon_mediumId.at(probe_index) && match_l1_muon) pass = true;
+
+                return pass;
+            }
+
+        
+        """)
+    def run(self):
+        ROOT = import_root()
+        self.add_to_root(ROOT)
+        #print("path = ", self.input()["data"][0].path)
+        df = ROOT.RDataFrame("Events", self.input()["data"][0].path)
+
+        #Cut events to have only two muons and one muonSV
+        #Also passes trigger
+        df = df.Filter("HLT_Mu9_IP6_part0==1 || HLT_Mu9_IP6_part1==1 || HLT_Mu9_IP6_part2==1 || HLT_Mu9_IP6_part3==1 || HLT_Mu9_IP6_part4==1")
+        df = df.Filter("nmuonSV==1")
+        df = df.Filter("nMuon==2")
+        df = df.Define("muonSV_pvalue", """getpvalue(muonSV_chi2, muonSV_ndof)""")
+        df = df.Filter("muonSV_pvalue.at(0) > 0.01")
+        df = df.Filter("(muonSV_mass.at(0) > 2.9) && (muonSV_mass.at(0) < 3.3)")
+        df = df.Filter("(abs(Muon_eta.at(0)) < 1.5) && (abs(Muon_eta.at(1)) < 1.5)")
+        df = df.Filter("""reco::deltaR(Muon_eta.at(0), Muon_phi.at(0), Muon_eta.at(1), Muon_phi.at(1)) > 0.15""")
+
+        #Now define the tag and probe indices (if invalid, returns a -1 for index)
+        df = df.Define("tag_probe_index", """get_tag_probe_index(muonSV_mu1index, muonSV_mu2index, muonSV_z, PV_z, Muon_dxy, Muon_dxyErr, Muon_pt, Muon_eta, Muon_phi, Muon_tightId, MuonBPark_pt, MuonBPark_eta, MuonBPark_phi, MuonBPark_fired_HLT_Mu9_IP6, TrigObjBPark_l1pt, TrigObjBPark_eta, TrigObjBPark_phi, TrigObjBPark_l1dR)""")
+        df = df.Define("tag_index", """tag_probe_index.first""")
+        df = df.Define("probe_index", """tag_probe_index.second""")
+        df = df.Filter("(tag_index>-1)&&(probe_index>-1)")
+        df = df.Define("pass_probe", """pass_probe(probe_index, Muon_pt, Muon_eta, Muon_phi, Muon_mediumId, MuonBPark_pt, MuonBPark_eta, MuonBPark_phi, MuonBPark_fired_HLT_Mu9_IP6, TrigObjBPark_eta, TrigObjBPark_phi)""")
+
+        #Define probe quantities
+        df = df.Define("probe_pt", """Muon_pt.at(probe_index)""")
+        df = df.Define("probe_eta", """Muon_eta.at(probe_index)""")
+        df = df.Define("probe_dxy", """Muon_dxy.at(probe_index)""")
+        df = df.Define("probe_dxysig", """(TMath::Abs(Muon_dxy.at(probe_index))/()(Muon_dxyErr.at(probe_index)))""")
+        df = df.Define("pair_mass", """"muonSV_mass.at(0)""")
+
+        df_pass = df.Filter("pass_probe==true")
+
+        pt_bins = [
+            "probe_pt > 8.0 && probe_pt < 9.0",
+            "probe_pt > 9.0 && probe_pt < 10.0",
+            "probe_pt > 10.0 && probe_pt < 12.0",
+            "probe_pt > 12.0 && probe_pt < 16.0",
+            "probe_pt > 16.0 && probe_pt < 20.0",
+            "probe_pt > 20.0 && probe_pt < 30.0"
+        ]
+        
+        dxysig_bins = [
+            "probe_dxysig > 4.5 && probe_dxysig < 5.5",
+            "probe_dxysig > 5.5 && probe_dxysig < 6.5",
+            "probe_dxysig > 6.5 && probe_dxysig < 7.5",
+            "probe_dxysig > 7.5 && probe_dxysig < 8.5",
+            "probe_dxysig > 8.5 && probe_dxysig < 10.0",
+            "probe_dxysig > 10.0 && probe_dxysig < 15.0",
+            "probe_dxysig > 15.0 && probe_dxysig < 20.0",
+            "probe_dxysig > 20.0 && probe_dxysig < 50.0"
+        ]
+
+        eta_bins = "abs(probe_eta) < 0.4"
+        
+        eta_bins_bparking = "abs(probe_eta) < 1.5"
+
+        #Collects histograms
+        histos = {}
+
+        for dxy_index, i in enumerate(dxysig_bins):
+            for pt_index, j in enumerate(pt_bins):
+                h_dxysig_pT_total = df.Filter(i).Filter(j).Filter(eta_bins).Histo1D(("h_dxysig_%s_pT_%s_total" % (dxy_index, pt_index), "; Dimuon mass (GeV); Events/0.04 GeV", 15, 2.8, 3.4), "pair_mass")
+                h_dxysig_pT_pass = df_pass.Filter(i).Filter(j).Filter(eta_bins).Histo1D(("h_dxysig_%s_pT_%s_Pass" % (dxy_index, pt_index), "; Dimuon mass (GeV); Events/0.04 GeV", 15, 2.8, 3.4), "pair_mass")
+                
+                h_dxysig_pT_fail = h_dxysig_pT_total.GetPtr() - h_dxysig_pT_pass.GetPtr()
+                h_dxysig_pT_fail.SetName("h_dxysig_%s_pT_%s_Fail"% (dxy_index, pt_index)) 
+
+                histos["h_dxysig_%s_pt_%s_Pass" % (dxy_index, pt_index)] = h_dxysig_pT_pass
+                histos["h_dxysig_%s_pt_%s_Fail" % (dxy_index, pt_index)] = h_dxysig_pT_fail
+        
+
+        histo_file = ROOT.TFile.Open(create_file_dir(self.output().path), "RECREATE")
+        for histo in histos.values():
+            histo.Write()
+        histo_file.Close()
+
 
 
 
