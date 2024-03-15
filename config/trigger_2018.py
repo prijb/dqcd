@@ -53,8 +53,10 @@ class Config(legacy_config):
                 check_empty=False,
             ),
             Dataset("BuToJpsiK_inclusive_muonSV",
-                dataset = "/BuToJpsiK_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/jleonhol-nanotronv2_slimmedmuons-c3e54d33997269b36a54d7557d26fd32/USER",
+                dataset = "/BuToJpsiK_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/jleonhol-nanotronv2_v3-209802c58913bedf9ef81b726e08129a/USER",
+                #dataset = "/BuToJpsiK_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/jleonhol-nanotronv2_slimmedmuons-c3e54d33997269b36a54d7557d26fd32/USER",
                 process=self.processes.get("BuToJpsiK"),
+                prefix="gfe02.grid.hep.ph.ic.ac.uk/pnfs/hep.ph.ic.ac.uk/data/cms",
                 check_empty=False,
             ),
         ]

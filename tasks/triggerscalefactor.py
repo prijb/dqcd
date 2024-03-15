@@ -1502,7 +1502,7 @@ class TriggerSFMod(TriggerSF):
 
             //Gets the pair of the tag and probe muon indices
             std::pair<int, int> get_tag_probe_index(Vint muonSV_mu1index, Vint muonSV_mu2index, 
-            Vfloat muonSV_z, Vfloat PV_z,
+            Vfloat muonSV_z, float PVfirst_z,
             Vfloat Muon_dxy, Vfloat Muon_dxyErr, Vfloat Muon_pt, Vfloat Muon_eta, Vfloat Muon_phi, ROOT::RVec<bool> Muon_tightId, 
             Vfloat MuonBPark_pt, Vfloat MuonBPark_eta, Vfloat MuonBPark_phi, Vint MuonBPark_fired_HLT_Mu9_IP6,
             Vfloat TrigObjBPark_l1pt, Vfloat TrigObjBPark_eta, Vfloat TrigObjBPark_phi, Vfloat TrigObjBPark_l1dR
@@ -1520,7 +1520,8 @@ class TriggerSFMod(TriggerSF):
                 //Do tag check for each muon index
                 for(int mu_index: mu_indices){
                     //Muon kinematics
-                    if(TMath::Abs(muonSV_z.at(0) - PV_z.at(0)) > 0.5) continue;
+                    //if(TMath::Abs(muonSV_z.at(0) - PV_z.at(0)) > 0.5) continue;
+                    if(TMath::Abs(muonSV_z.at(0) - PVfirst_z) > 0.5) continue;
                     if(TMath::Abs(Muon_dxy.at(mu_index)/Muon_dxyErr.at(mu_index)) < 8.) continue;
                     if(Muon_pt.at(mu_index) < 10.) continue;
                     if(!Muon_tightId.at(mu_index)) continue;
@@ -1641,9 +1642,10 @@ class TriggerSFMod(TriggerSF):
         df = df.Filter("(muonSV_mass.at(0) > 2.9) && (muonSV_mass.at(0) < 3.3)")
         df = df.Filter("(abs(Muon_eta.at(0)) < 1.5) && (abs(Muon_eta.at(1)) < 1.5)")
         df = df.Filter("""reco::deltaR(Muon_eta.at(0), Muon_phi.at(0), Muon_eta.at(1), Muon_phi.at(1)) > 0.15""")
+        df = df.Define("PVfirst_z", "PV_z") #PV_z is a float and not a vector of floats? Making this alias because I just realised that now. Weird that C++ never complained when I declared it as a float
 
         #Now define the tag and probe indices (if invalid, returns a -1 for index)
-        df = df.Define("tag_probe_index", """get_tag_probe_index(muonSV_mu1index, muonSV_mu2index, muonSV_z, PV_z, Muon_dxy, Muon_dxyErr, Muon_pt, Muon_eta, Muon_phi, Muon_tightId, MuonBPark_pt, MuonBPark_eta, MuonBPark_phi, MuonBPark_fired_HLT_Mu9_IP6, TrigObjBPark_l1pt, TrigObjBPark_eta, TrigObjBPark_phi, TrigObjBPark_l1dR)""")
+        df = df.Define("tag_probe_index", """get_tag_probe_index(muonSV_mu1index, muonSV_mu2index, muonSV_z, PVfirst_z, Muon_dxy, Muon_dxyErr, Muon_pt, Muon_eta, Muon_phi, Muon_tightId, MuonBPark_pt, MuonBPark_eta, MuonBPark_phi, MuonBPark_fired_HLT_Mu9_IP6, TrigObjBPark_l1pt, TrigObjBPark_eta, TrigObjBPark_phi, TrigObjBPark_l1dR)""")
         df = df.Define("tag_index", """tag_probe_index.first""")
         df = df.Define("probe_index", """tag_probe_index.second""")
         df = df.Filter("(tag_index>-1)&&(probe_index>-1)")
@@ -1653,8 +1655,8 @@ class TriggerSFMod(TriggerSF):
         df = df.Define("probe_pt", """Muon_pt.at(probe_index)""")
         df = df.Define("probe_eta", """Muon_eta.at(probe_index)""")
         df = df.Define("probe_dxy", """Muon_dxy.at(probe_index)""")
-        df = df.Define("probe_dxysig", """(TMath::Abs(Muon_dxy.at(probe_index))/()(Muon_dxyErr.at(probe_index)))""")
-        df = df.Define("pair_mass", """"muonSV_mass.at(0)""")
+        df = df.Define("probe_dxysig", """(TMath::Abs(Muon_dxy.at(probe_index))/(Muon_dxyErr.at(probe_index)))""")
+        df = df.Define("pair_mass", """muonSV_mass.at(0)""")
 
         df_pass = df.Filter("pass_probe==true")
 
