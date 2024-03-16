@@ -59,6 +59,16 @@ class Config(legacy_config):
                 prefix="gfe02.grid.hep.ph.ic.ac.uk/pnfs/hep.ph.ic.ac.uk/data/cms",
                 check_empty=False,
             ),
+            Dataset("data_2018d_bph1",
+                dataset="/ParkingBPH1/jleonhol-nanotronv2-205145b8a3c6bd3ea858a0dbe549c313/USER",
+                process=self.processes.get("data"),
+                merging={
+                    "base": 20,
+                },
+                tags=["ul"],
+                runPeriod="D",
+                prefix="gfe02.grid.hep.ph.ic.ac.uk/pnfs/hep.ph.ic.ac.uk/data/cms",
+            ),
         ]
         return ObjectCollection(datasets)
 
