@@ -1536,7 +1536,7 @@ class TriggerSFMod(TriggerSF):
                     for(unsigned i=0; i<MuonBPark_eta.size(); i++){
                         float dR = reco::deltaR(Muon_eta.at(mu_index), Muon_phi.at(mu_index), MuonBPark_eta.at(i), MuonBPark_phi.at(i));
                         
-                        if((dR < closest_muonbpark_dr) && (dR < 0.2)){
+                        if((dR < closest_muonbpark_dr) && (dR < 0.1)){
                             closest_muonbpark = i;
                             closest_muonbpark_dr = dR;
                         }                        
@@ -1576,8 +1576,8 @@ class TriggerSFMod(TriggerSF):
                     probe_index = probe_index_candidates.at(0);
                 }
                 if(tag_index_candidates.size()==2){
-                    tag_index = (Muon_pt.at(tag_index_candidates.at(0)) > Muon_pt.at(tag_index_candidates.at(0))) ? tag_index_candidates.at(0) : tag_index_candidates.at(1);
-                    probe_index = (Muon_pt.at(tag_index_candidates.at(0)) > Muon_pt.at(tag_index_candidates.at(0))) ? probe_index_candidates.at(0) : probe_index_candidates.at(1);
+                    tag_index = (Muon_pt.at(tag_index_candidates.at(0)) > Muon_pt.at(tag_index_candidates.at(1))) ? tag_index_candidates.at(0) : tag_index_candidates.at(1);
+                    probe_index = (Muon_pt.at(tag_index_candidates.at(0)) > Muon_pt.at(tag_index_candidates.at(1))) ? probe_index_candidates.at(0) : probe_index_candidates.at(1);
                 }
                 
                 std::pair<int, int> tag_and_probe_pair;
@@ -1601,7 +1601,7 @@ class TriggerSFMod(TriggerSF):
                 for(unsigned i=0; i<MuonBPark_eta.size(); i++){
                     float dR = reco::deltaR(Muon_eta.at(probe_index), Muon_phi.at(probe_index), MuonBPark_eta.at(i), MuonBPark_phi.at(i));
                     
-                    if((dR < closest_muonbpark_dr) && (dR < 0.2)){
+                    if((dR < closest_muonbpark_dr) && (dR < 0.1)){
                         closest_muonbpark = i;
                         closest_muonbpark_dr = dR;
                     }
@@ -1632,20 +1632,32 @@ class TriggerSFMod(TriggerSF):
         #print("path = ", self.input()["data"][0].path)
         df = ROOT.RDataFrame("Events", self.input()["data"][0].path)
 
-        #Cut events to have only two muons and one muonSV
+        #Restrict selections to OS muonSVs
+        muonSV_vars = ["chi2", "ndof", "mass", "mu1index", "mu2index", "z"]
+        for var in muonSV_vars:
+            muonSV_var_base = "muonSV_" + var
+            muonSV_var_new = "muonSV_OS_" + var
+            df = df.Define(muonSV_var_new, "%s[muonSV_charge==0]"%(muonSV_var_base))
+        
+        df = df.Define("nmuonSV_OS", "muonSV_OS_mass.size()")
+
+
+        #Cut events to have only two OS muons and one OS muonSV
         #Also passes trigger
         df = df.Filter("HLT_Mu9_IP6_part0==1 || HLT_Mu9_IP6_part1==1 || HLT_Mu9_IP6_part2==1 || HLT_Mu9_IP6_part3==1 || HLT_Mu9_IP6_part4==1")
-        df = df.Filter("nmuonSV==1")
+        df = df.Filter("nmuonSV_OS==1")
         df = df.Filter("nMuon==2")
-        df = df.Define("muonSV_pvalue", """getpvalue(muonSV_chi2, muonSV_ndof)""")
-        df = df.Filter("muonSV_pvalue.at(0) > 0.01")
-        df = df.Filter("(muonSV_mass.at(0) > 2.9) && (muonSV_mass.at(0) < 3.3)")
+        df = df.Filter("(Muon_charge.at(0))!=(Muon_charge.at(1))")
+        df = df.Define("muonSV_OS_pvalue", """getpvalue(muonSV_OS_chi2, muonSV_OS_ndof)""")
+        df = df.Filter("muonSV_OS_pvalue.at(0) > 0.01")
+        df = df.Filter("(muonSV_OS_mass.at(0) > 2.9) && (muonSV_OS_mass.at(0) < 3.3)")
         df = df.Filter("(abs(Muon_eta.at(0)) < 1.5) && (abs(Muon_eta.at(1)) < 1.5)")
         df = df.Filter("""reco::deltaR(Muon_eta.at(0), Muon_phi.at(0), Muon_eta.at(1), Muon_phi.at(1)) > 0.15""")
         df = df.Define("PVfirst_z", "PV_z") #PV_z is a float and not a vector of floats? Making this alias because I just realised that now. Weird that C++ never complained when I declared it as a float
 
         #Now define the tag and probe indices (if invalid, returns a -1 for index)
-        df = df.Define("tag_probe_index", """get_tag_probe_index(muonSV_mu1index, muonSV_mu2index, muonSV_z, PVfirst_z, Muon_dxy, Muon_dxyErr, Muon_pt, Muon_eta, Muon_phi, Muon_tightId, MuonBPark_pt, MuonBPark_eta, MuonBPark_phi, MuonBPark_fired_HLT_Mu9_IP6, TrigObjBPark_l1pt, TrigObjBPark_eta, TrigObjBPark_phi, TrigObjBPark_l1dR)""")
+        #Note: Replaced Muon_dxy with Muon_dxybs
+        df = df.Define("tag_probe_index", """get_tag_probe_index(muonSV_OS_mu1index, muonSV_OS_mu2index, muonSV_OS_z, PVfirst_z, Muon_dxybs, Muon_dxyErr, Muon_pt, Muon_eta, Muon_phi, Muon_tightId, MuonBPark_pt, MuonBPark_eta, MuonBPark_phi, MuonBPark_fired_HLT_Mu9_IP6, TrigObjBPark_l1pt, TrigObjBPark_eta, TrigObjBPark_phi, TrigObjBPark_l1dR)""")
         df = df.Define("tag_index", """tag_probe_index.first""")
         df = df.Define("probe_index", """tag_probe_index.second""")
         df = df.Filter("(tag_index>-1)&&(probe_index>-1)")
@@ -1654,17 +1666,18 @@ class TriggerSFMod(TriggerSF):
         #Define probe quantities
         df = df.Define("probe_pt", """Muon_pt.at(probe_index)""")
         df = df.Define("probe_eta", """Muon_eta.at(probe_index)""")
-        df = df.Define("probe_dxy", """Muon_dxy.at(probe_index)""")
-        df = df.Define("probe_dxysig", """(TMath::Abs(Muon_dxy.at(probe_index))/(Muon_dxyErr.at(probe_index)))""")
+        df = df.Define("probe_dxy", """Muon_dxybs.at(probe_index)""")
+        df = df.Define("probe_dxysig", """(TMath::Abs(Muon_dxybs.at(probe_index))/(Muon_dxyErr.at(probe_index)))""")
         df = df.Define("probe_sip3d", """Muon_sip3d.at(probe_index)""")
-        df = df.Define("pair_mass", """muonSV_mass.at(0)""")
+        df = df.Define("pair_mass", """muonSV_OS_mass.at(0)""")
 
         df_pass = df.Filter("pass_probe==true")
 
         
-        #For 1D efficiency
+        #For 1D efficiency (added extra bin)
         dxy_bins_1d = [
-            "abs(probe_dxy) > 0.001 && abs(probe_dxy) < 0.1",
+            "abs(probe_dxy) > 0.001 && abs(probe_dxy) < 0.01",
+            "abs(probe_dxy) > 0.01 && abs(probe_dxy) < 0.1",
             "abs(probe_dxy) > 0.1 && abs(probe_dxy) < 0.5",
             "abs(probe_dxy) > 0.5 && abs(probe_dxy) < 1.0",
             "abs(probe_dxy) > 1.0 && abs(probe_dxy) < 10.0"
@@ -1717,7 +1730,8 @@ class TriggerSFMod(TriggerSF):
 
         #This is for the other 2D plot
         dxy_bins_2d = [
-            "abs(probe_dxy) > 0.001 && abs(probe_dxy) < 0.1",
+            "abs(probe_dxy) > 0.001 && abs(probe_dxy) < 0.01",
+            "abs(probe_dxy) > 0.01 && abs(probe_dxy) < 0.1",
             "abs(probe_dxy) > 0.1 && abs(probe_dxy) < 1.0",
             "abs(probe_dxy) > 1.0 && abs(probe_dxy) < 10.0"
         ]
