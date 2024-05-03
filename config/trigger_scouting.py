@@ -9,11 +9,10 @@ from config.legacy_2018 import Config as legacy_config
 class Config(legacy_config):
 
     def add_datasets(self):
-
         datasets = [
             Dataset("Scouting2022F",
                 dataset = "/ScoutingPFRun3/ppradeep-2022F-f0e3b442cad690715385ee64027967ff/USER",
-                process = self.process.get("Scouting2022F"),
+                process = self.processes.get("Scouting2022F"),
                 check_empty=False,
             ),
         ]

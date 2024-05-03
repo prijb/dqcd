@@ -8,9 +8,8 @@ from config.legacy_2018 import Config as legacy_config
 
 
 class Config(legacy_config):
-
+    
     def add_datasets(self):
-
         datasets = [
             Dataset("LambdaBToJpsiLambda",
                 dataset = "/LambdaBToJpsiLambda_JpsiToMuMu_TuneCP5_13TeV-pythia8-evtgen/jleonhol-JPsiMC-f7d89a2f103706ffd8ab9007e324774d/USER", 

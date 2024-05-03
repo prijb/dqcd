@@ -281,6 +281,7 @@ class Config(cmt_config):
             Process("LambdaBToJpsiLambda", Label("LambdaBToJpsiLambda"), color=(0, 0, 0), parent_process="background"),
             Process("BToJpsiJPsiToMuMu", Label("BToJpsiJPsiToMuMu"), color=(0, 0, 0), parent_process="background"),
             Process("BuToJpsiK", Label("BuToJpsiK"), color=(0, 0, 0), parent_process="background"),
+            Process("Scouting2022F", Label("Scouting2022F"), color=(0,0,0), parent_process="background"),
         ]
 
         process_group_names = {
