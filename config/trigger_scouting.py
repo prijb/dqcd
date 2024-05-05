@@ -15,6 +15,11 @@ class Config(legacy_config):
                 process = self.processes.get("Scouting2022F"),
                 check_empty=False,
             ),
+            Dataset("DileptonMinBias2022",
+                dataset = "/InclusiveDileptonMinBias_TuneCP5Plus_13p6TeV_pythia8/ppradeep-2022-8c2f5715331d2ea6d01c115b141b34b0/USER",
+                process = self.processes.get("DileptonMinBias2022"),
+                check_empty=False,
+            ),
         ]
         return ObjectCollection(datasets)
 

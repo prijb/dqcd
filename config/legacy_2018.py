@@ -281,7 +281,9 @@ class Config(cmt_config):
             Process("LambdaBToJpsiLambda", Label("LambdaBToJpsiLambda"), color=(0, 0, 0), parent_process="background"),
             Process("BToJpsiJPsiToMuMu", Label("BToJpsiJPsiToMuMu"), color=(0, 0, 0), parent_process="background"),
             Process("BuToJpsiK", Label("BuToJpsiK"), color=(0, 0, 0), parent_process="background"),
-            Process("Scouting2022F", Label("Scouting2022F"), color=(0,0,0), parent_process="background"),
+            Process("Scouting2022F", Label("Scouting2022F"), color=(0,0,0), parent_process="data"), #SnT SFs
+            Process("DileptonMinBias2022", Label("DileptonMinBias2022"), color=(0,0,0), parent_process="background"), #SnT SFs
+
         ]
 
         process_group_names = {
