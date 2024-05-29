@@ -76,7 +76,7 @@ class TriggerSFScouting(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorWork
 
         #Define orthogonal dataframe
         df_orthogonal = df.Define("OrthoTrigger", ortho_trigs).Define("MuTrigger", muscouting_trigs)
-        df_orthogonal = df_orthogonal.Filter("OrthoTrigger==true")
+        #df_orthogonal = df_orthogonal.Filter("OrthoTrigger==true")
 
         #Now get the denominator
         #Muon and SV selection

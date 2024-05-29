@@ -9,17 +9,22 @@ from config.legacy_2018 import Config as legacy_config
 class Config(legacy_config):
 
     def add_datasets(self):
+        eos_path = "/eos/user/j/jleonhol/scouting_2022/"
+        sample_path = "/vols/cms/pb4918/StoreNTuple/SnTScouting/Data/"
         datasets = [
-            Dataset("Scouting2022F",
-                dataset = "/ScoutingPFRun3/ppradeep-2022F-3588c69a11675da582eb4e73ebc9784b/USER",
+            Dataset("Scouting",
+                folder = sample_path,
                 process = self.processes.get("Scouting2022F"),
+                file_pattern = "output_Data(.*).root",
                 check_empty=False,
             ),
-            Dataset("DileptonMinBias2022",
-                dataset = "/InclusiveDileptonMinBias_TuneCP5Plus_13p6TeV_pythia8/ppradeep-2022-8c2f5715331d2ea6d01c115b141b34b0/USER",
-                process = self.processes.get("DileptonMinBias2022"),
-                check_empty=False,
-            ),
+            #Dataset("Scouting",
+            #    prefix = "eosuser.cern.ch",
+            #    folder = eos_path,
+            #    process = self.processes.get("Scouting2022F"),
+            #    file_pattern = "output_Data(.*).root",
+            #    check_empty=False,
+            #),
         ]
         return ObjectCollection(datasets)
 
