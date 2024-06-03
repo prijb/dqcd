@@ -1166,6 +1166,16 @@ class Config(cmt_config):
             Feature("trigSF", "trigSF", binning=(20, 0, 2),
                 x_title=Label("trigSF"),
                 systematics=["trig"]),
+            Feature("SVOverlap_vtxIdxs", "SVOverlap_vtxIdxs", 
+                binning=(11, -1, 10),
+                x_title=Label("SVOverlap_vtxIdxs")),
+            Feature("Muon_vtxIdxs", "Muon_vtxIdxs",
+                binning=(11, -1, 10),
+                x_title=Label("Muon_vtxIdxs")),
+            Feature("Muon_pt", "Muon_pt",
+                binning=(30, 0.0, 100.0),
+                x_title=Label("Muon_pt")),
+
         ]
         return ObjectCollection(features)
 

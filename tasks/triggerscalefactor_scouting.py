@@ -76,7 +76,7 @@ class TriggerSFScouting(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorWork
 
         #Define orthogonal dataframe
         df_orthogonal = df.Define("OrthoTrigger", ortho_trigs).Define("MuTrigger", muscouting_trigs)
-        #df_orthogonal = df_orthogonal.Filter("OrthoTrigger==true")
+        df_orthogonal = df_orthogonal.Filter("OrthoTrigger==true")
 
         #Now get the denominator
         #Muon and SV selection
@@ -167,6 +167,9 @@ class TriggerSFScouting(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorWork
 
             histos["h_lxy_%s_pT_100_pass"%(lxy_bin)] = h_lxy_pT_pass
             histos["h_lxy_%s_pT_100_fail"%(lxy_bin)] = h_lxy_pT_fail
+
+        #Overall kinematics
+        histos["h_sublead_pT"] = df_denominator.Histo1D(("h_sublead_pT", "; Subleading muon pT (GeV); Events/0.3 GeV", 100, 0, 30), "subleading_pt")
 
         histo_file = ROOT.TFile.Open(create_file_dir(self.output().path), "RECREATE")
         for histo in histos.values():

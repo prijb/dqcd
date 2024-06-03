@@ -9,6 +9,7 @@ from config.legacy_2018 import Config as legacy_config
 class Config(legacy_config):
 
     def add_datasets(self):
+        self.tree_name = "tout"
         eos_path = "/eos/user/j/jleonhol/scouting_2022/"
         sample_path = "/vols/cms/pb4918/StoreNTuple/SnTScouting/Data/"
         datasets = [
@@ -27,5 +28,13 @@ class Config(legacy_config):
             #),
         ]
         return ObjectCollection(datasets)
+    
+    def add_categories(self):
+        categories = [
+            Category("base", label="base", selection="evtn >= 0"),
+        ]
+        return ObjectCollection(categories)
+
+    
 
 config = Config("base", year=2022, ecm=13.6, lumi_pb=35200, isUL=True)
