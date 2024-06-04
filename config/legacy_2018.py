@@ -1175,6 +1175,14 @@ class Config(cmt_config):
             Feature("Muon_pt", "Muon_pt",
                 binning=(30, 0.0, 100.0),
                 x_title=Label("Muon_pt")),
+            Feature("JPsi_mass_denom", "DimuonMassDenom",
+                binning=(30, 2.8, 3.4),
+                x_title=Label("Dimuon mass"),
+                units="GeV"),
+            Feature("JPsi_mass", "DimuonMassPass",
+                binning=(30, 2.8, 3.4),
+                x_title=Label("Dimuon mass"),
+                units="GeV"),
 
         ]
         return ObjectCollection(features)

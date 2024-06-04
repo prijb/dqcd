@@ -33,6 +33,70 @@ class SnTMakeDimuonsRDFProducer():
             Vfloat prob;
         };
 
+        //Denominator definition (all OS dimuons with a common vertex)
+        auto getSimpleDimuons(Vint Muon_ch, Vfloat Muon_pt, Vfloat Muon_eta, Vfloat Muon_phi, Vfloat Muon_phiCorr,
+        Vfloat Muon_dxyCorr, Vfloat Muon_dxye, Vint Muon_bestAssocSVIdx,
+        float PV_x, float PV_y, float PV_z,
+        Vfloat SV_x, Vfloat SV_y, Vfloat SV_z,
+        Vfloat SV_xe, Vfloat SV_ye, Vfloat SV_ze,
+        Vfloat SV_lxy, Vfloat SV_l3d, Vfloat SV_prob, ROOT::RVec<uint> SV_index){
+
+            event_vertices dimuons;
+            std::vector<int> muon_sel_idx{};
+
+            //Iterate over muons
+            for(unsigned i=0; i<Muon_pt.size(); i++){
+                for(unsigned j=i+1; j<Muon_pt.size(); j++){
+                    bool same_vertex = (Muon_bestAssocSVIdx.at(i) == Muon_bestAssocSVIdx.at(j));
+                    bool is_neutral = ((Muon_ch.at(i) + Muon_ch.at(j)) == 0); 
+
+                    if(same_vertex && is_neutral){
+                        int pass_veto = 1;
+                        int common_vertex;
+                        for(int vpos=0; vpos<SV_index.size(); vpos++){
+                            if(SV_index.at(vpos) == Muon_bestAssocSVIdx.at(i)){
+                                common_vertex = vpos;
+                                break;
+                            }
+                        }
+                        //Muon lorentz vectors
+                        ROOT::Math::PtEtaPhiMVector Muon_i_corr(Muon_pt.at(i), Muon_eta.at(i), Muon_phiCorr.at(i), 0.10566);
+                        ROOT::Math::PtEtaPhiMVector Muon_i_uncorr(Muon_pt.at(i), Muon_eta.at(i), Muon_phi.at(i), 0.10566);
+                        ROOT::Math::PtEtaPhiMVector Muon_j_corr(Muon_pt.at(j), Muon_eta.at(j), Muon_phiCorr.at(j), 0.10566);
+                        ROOT::Math::PtEtaPhiMVector Muon_j_uncorr(Muon_pt.at(j), Muon_eta.at(j), Muon_phi.at(j), 0.10566);
+
+                        //SV vector
+                        ROOT::Math::XYZVector SV_vec(SV_x.at(common_vertex) - PV_x, SV_y.at(common_vertex) - PV_y, SV_z.at(common_vertex) - PV_z);
+
+                        //Dimuon vector
+                        ROOT::Math::PtEtaPhiMVector dimuon_corr = Muon_i_corr + Muon_j_corr;
+                        ROOT::Math::PtEtaPhiMVector dimuon_uncorr = Muon_i_uncorr + Muon_j_uncorr;
+
+                        dimuons.mu1idx.push_back(i);
+                        dimuons.mu2idx.push_back(j);
+                        dimuons.mu3idx.push_back(-1);
+                        dimuons.mu4idx.push_back(-1);
+                        dimuons.passveto.push_back(0);
+                        dimuons.excesshits.push_back(0);
+                        dimuons.category.push_back(0);
+                        dimuons.assocSVOverlap.push_back(0);
+                        dimuons.px.push_back(dimuon_corr.px());
+                        dimuons.py.push_back(dimuon_corr.py());
+                        dimuons.pz.push_back(dimuon_corr.pz());
+                        dimuons.x.push_back(SV_x.at(common_vertex));
+                        dimuons.y.push_back(SV_y.at(common_vertex));
+                        dimuons.z.push_back(SV_z.at(common_vertex));
+                        dimuons.mass.push_back(dimuon_corr.mass());
+                        dimuons.lxy.push_back(SV_lxy.at(common_vertex));
+                        dimuons.l3d.push_back(SV_l3d.at(common_vertex));
+                        dimuons.prob.push_back(SV_prob.at(common_vertex));
+
+                    }  
+                }        
+            }
+            return dimuons;
+        }
+
         //Gets the dimuons for the event
         auto getDimuons(Vint Muon_ch, Vfloat Muon_pt, Vfloat Muon_eta, Vfloat Muon_phi, Vfloat Muon_phiCorr, 
         Vfloat Muon_dxyCorr, Vfloat Muon_dxye, Vbool Muon_selected,
@@ -186,16 +250,21 @@ class SnTMakeDimuonsRDFProducer():
 
         df = df.Filter("passHLT==1")
         df = df.Define("nSV", "SV_selected.size()").Define("nSVOverlap", "SVOverlap_x.size()")
+        df = df.Define("EventDimuonsDenom", "getSimpleDimuons(Muon_ch, Muon_pt, Muon_eta, Muon_phi, Muon_phiCorr, Muon_dxyCorr, Muon_dxye, Muon_bestAssocSVIdx, PV_x, PV_y, PV_z, SV_x, SV_y, SV_z, SV_xe, SV_ye, SV_ze, SV_lxy, SV_l3d, SV_prob, SV_index)")
         df = df.Define("EventDimuons", "getDimuons(Muon_ch, Muon_pt, Muon_eta, Muon_phi, Muon_phiCorr, Muon_dxyCorr, Muon_dxye, Muon_selected, Muon_bestAssocSVOverlapIdx, Muon_bestAssocSVIdx, Muon_nhitsbeforesv, PV_x, PV_y, PV_z, SV_x, SV_y, SV_z, SV_xe, SV_ye, SV_ze, SV_minDistanceFromDet_x, SV_minDistanceFromDet_y, SV_minDistanceFromDet_z, SV_onModuleWithinUnc, SV_lxy, SV_l3d, SV_prob, SV_selected, SV_index)")
 
         #Define plot variables
+        #Denominator
+        df = df.Define("DimuonMassDenom", "EventDimuonsDenom.mass").Define("DimuonProbDenom", "EventDimuonsDenom.prob")
+        #Numerator
         df = df.Define("DimuonMass", "EventDimuons.mass").Define("DimuonPass", "EventDimuons.passveto").Define("DimuonProb", "EventDimuons.prob").Define("DimuonAssocSVOverlap", "EventDimuons.assocSVOverlap")
         df = df.Define("DimuonMassPass", "DimuonMass[DimuonPass==1]").Define("DimuonProbPass", "DimuonProb[DimuonPass==1]")
-        df = df.Filter("DimuonMassPass.size() > 0")
+        #df = df.Filter("DimuonMassPass.size() > 0")
         df = df.Define("DimuonMassPassAssocSVOverlap", "DimuonMass[DimuonPass==1 && DimuonAssocSVOverlap==1]").Define("DimuonProbPassAssocSVOverlap", "DimuonProb[DimuonPass==1 && DimuonAssocSVOverlap==1]")
         df = df.Define("DimuonMassPassBest", "DimuonMassPass[ArgMax(DimuonProbPass)]").Define("DimuonProbPassBest", "DimuonProbPass[ArgMax(DimuonProbPass)]")
 
-        return df, ["DimuonMassPassBest", "DimuonProbPassBest", "DimuonMassPassAssocSVOverlap", "DimuonProbPassAssocSVOverlap"]
+
+        return df, ["DimuonMassDenom", "DimuonProbDenom", "DimuonMassPass", "DimuonProbPass", "DimuonMassPassBest", "DimuonProbPassBest", "DimuonMassPassAssocSVOverlap", "DimuonProbPassAssocSVOverlap"]
 
 def SnTMakeDimuonsRDF(*args, **kwargs):
     return lambda: SnTMakeDimuonsRDFProducer(*args, **kwargs)
