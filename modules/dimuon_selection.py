@@ -256,7 +256,12 @@ class SnTMakeDimuonsRDFProducer():
 
     def run(self, df):
 
+        muscouting_trigs = "(L1_DoubleMu_15_7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_Min7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_7to18==true)||(L1_DoubleMu4_SQ_OS_dR_Max1p2==true)||(L1_DoubleMu4p5_SQ_OS_dR_Max1p2==true)"
+
+        df = df.Define("MuTrigger", muscouting_trigs)
+
         df = df.Filter("passHLT==1")
+        df = df.Filter("MuTrigger==true")
         df = df.Define("nSV", "SV_selected.size()").Define("nSVOverlap", "SVOverlap_x.size()")
         df = df.Define("EventDimuonsDenom", "getSimpleDimuons(Muon_ch, Muon_pt, Muon_eta, Muon_phi, Muon_phiCorr, Muon_dxyCorr, Muon_dxye, Muon_bestAssocSVIdx, PV_x, PV_y, PV_z, SV_x, SV_y, SV_z, SV_xe, SV_ye, SV_ze, SV_lxy, SV_l3d, SV_prob, SV_index)")
         df = df.Define("EventDimuons", "getDimuons(Muon_ch, Muon_pt, Muon_eta, Muon_phi, Muon_phiCorr, Muon_dxyCorr, Muon_dxye, Muon_selected, Muon_bestAssocSVOverlapIdx, Muon_bestAssocSVIdx, Muon_nhitsbeforesv, PV_x, PV_y, PV_z, SV_x, SV_y, SV_z, SV_xe, SV_ye, SV_ze, SV_minDistanceFromDet_x, SV_minDistanceFromDet_y, SV_minDistanceFromDet_z, SV_onModuleWithinUnc, SV_lxy, SV_l3d, SV_prob, SV_selected, SV_index)")
