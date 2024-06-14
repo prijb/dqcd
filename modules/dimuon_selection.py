@@ -242,8 +242,16 @@ class SnTMakeDimuonsRDFProducer():
                     }
                 }
             }
-            return dimuons;
-        }                 
+            return dimuons;                     
+        }
+        //Function to get best dimuon value
+        auto getBestDimuon(Vfloat dimuon_val, Vfloat dimuon_prob){
+            float best_val = -1;
+            if(dimuon_prob.size() > 0){
+                best_val = dimuon_val[ArgMax(dimuon_prob)];
+            }
+            return best_val;
+        }                  
         """)
 
     def run(self, df):
@@ -255,16 +263,18 @@ class SnTMakeDimuonsRDFProducer():
 
         #Define plot variables
         #Denominator
-        df = df.Define("DimuonMassDenom", "EventDimuonsDenom.mass").Define("DimuonProbDenom", "EventDimuonsDenom.prob")
+        df = df.Define("DimuonMassDenom", "EventDimuonsDenom.mass").Define("DimuonProbDenom", "EventDimuonsDenom.prob").Define("DimuonLxyDenom", "EventDimuonsDenom.lxy")
         #Numerator
-        df = df.Define("DimuonMass", "EventDimuons.mass").Define("DimuonPass", "EventDimuons.passveto").Define("DimuonProb", "EventDimuons.prob").Define("DimuonAssocSVOverlap", "EventDimuons.assocSVOverlap")
-        df = df.Define("DimuonMassPass", "DimuonMass[DimuonPass==1]").Define("DimuonProbPass", "DimuonProb[DimuonPass==1]")
+        df = df.Define("DimuonMass", "EventDimuons.mass").Define("DimuonPass", "EventDimuons.passveto").Define("DimuonProb", "EventDimuons.prob").Define("DimuonAssocSVOverlap", "EventDimuons.assocSVOverlap").Define("DimuonLxy", "EventDimuons.lxy")
+        df = df.Define("DimuonMassPass", "DimuonMass[DimuonPass==1]").Define("DimuonProbPass", "DimuonProb[DimuonPass==1]").Define("DimuonLxyPass", "DimuonLxy[DimuonPass==1]")
+        df = df.Define("DimuonMassPassBest", "getBestDimuon(DimuonMassPass, DimuonProbPass)").Define("DimuonProbPassBest", "getBestDimuon(DimuonProbPass, DimuonProbPass)").Define("DimuonLxyPassBest", "getBestDimuon(DimuonLxyPass, DimuonProbPass)")
         #df = df.Filter("DimuonMassPass.size() > 0")
-        df = df.Define("DimuonMassPassAssocSVOverlap", "DimuonMass[DimuonPass==1 && DimuonAssocSVOverlap==1]").Define("DimuonProbPassAssocSVOverlap", "DimuonProb[DimuonPass==1 && DimuonAssocSVOverlap==1]")
-        df = df.Define("DimuonMassPassBest", "DimuonMassPass[ArgMax(DimuonProbPass)]").Define("DimuonProbPassBest", "DimuonProbPass[ArgMax(DimuonProbPass)]")
+        #df = df.Define("DimuonMassPassAssocSVOverlap", "DimuonMass[DimuonPass==1 && DimuonAssocSVOverlap==1]").Define("DimuonProbPassAssocSVOverlap", "DimuonProb[DimuonPass==1 && DimuonAssocSVOverlap==1]")
+        #df = df.Define("DimuonMaxProbIdx", "ArgMax(DimuonProbPass)")
+        #df = df.Define("DimuonMassPassBest", "DimuonMassPass[ArgMax(DimuonProbPass)]").Define("DimuonProbPassBest", "DimuonProbPass[ArgMax(DimuonProbPass)]")
 
-
-        return df, ["DimuonMassDenom", "DimuonProbDenom", "DimuonMassPass", "DimuonProbPass", "DimuonMassPassBest", "DimuonProbPassBest", "DimuonMassPassAssocSVOverlap", "DimuonProbPassAssocSVOverlap"]
+        return df, ["DimuonMassDenom", "DimuonProbDenom", "DimuonLxyDenom", "DimuonMassPass", "DimuonProbPass", "DimuonLxyPass", "DimuonMassPassBest", "DimuonProbPassBest", "DimuonLxyPassBest"]
+        #return df, ["DimuonMassDenom", "DimuonProbDenom", "DimuonMassPass", "DimuonProbPass", "DimuonMaxProbIdx", "DimuonMassPassBest", "DimuonProbPassBest", "DimuonMassPassAssocSVOverlap", "DimuonProbPassAssocSVOverlap"]
 
 def SnTMakeDimuonsRDF(*args, **kwargs):
     return lambda: SnTMakeDimuonsRDFProducer(*args, **kwargs)

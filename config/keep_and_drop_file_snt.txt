@@ -1,3 +1,5 @@
 drop Muon_vtxIdxs
 drop SVOverlap_vtxIdxs
 drop Muon_vec
+drop Muon.*
+drop SV.*
