@@ -102,10 +102,8 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
         df_denominator = df_denominator.Define("dimuon_system", "make_dimuon_system(SV_lxy, SV_x, SV_y, SV_z, Muon_pt, Muon_eta, Muon_phiCorr, Muon_dxy, CommonVertexIdx)")
         df_denominator = df_denominator.Define("subleading_pt", "dimuon_system.subleading_pt").Define("min_dxy", "dimuon_system.min_dxy").Define("dimuon_lxy", "dimuon_system.dimuon_lxy").Define("dimuon_dr", "dimuon_system.dimuon_dr").Define("dimuon_mass", "dimuon_system.dimuon_mass").Define("dimuon_pt", "dimuon_system.dimuon_pt").Define("dimuon_eta", "dimuon_system.dimuon_eta")
 
-
         # Choose resonance (J/Psi)
         df_denominator = df_denominator.Filter("(dimuon_mass>2.6) && (dimuon_mass<3.4)")
-
         df_pass = df_denominator.Filter("MuTrigger==true")
 
         lxy_bins = [
@@ -186,17 +184,21 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
 
         #Overall kinematics
         pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0])
+        jpsi_pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0, 80.0, 200.0])
         eta_bins_2d_kine = array('d',[-2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5])
-        histos["h_sublead_pT_dimuon_eta"] = df_denominator.Histo2D(("h_sublead_pT_dimuon_eta", "; Subleading muon pT (GeV); Dimuon eta; Events", len(pt_bins_2d_kine)-1, pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "subleading_pt", "dimuon_eta")
+        lxy_bins_2d = array('d',[0.0, 0.2, 1.0, 2.4, 3.1, 7.0, 11.0, 16.0, 70.0])
+
+        #These are kinematics for events passing the Mu trigger and SV selections (for reweighting)
+        histos["h_sublead_pT_dimuon_eta"] = df_pass.Histo2D(("h_sublead_pT_dimuon_eta", "; Subleading muon pT (GeV); Dimuon eta; Events", len(pt_bins_2d_kine)-1, pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "subleading_pt", "dimuon_eta")
+
+        # J/Psi kinematics
         histos["h_sublead_pT"] = df_denominator.Histo1D(("h_sublead_pT", "; Subleading muon pT (GeV); Events/0.3 GeV", 100, 0, 30), "subleading_pt")
         histos["h_dimuon_pT"] = df_denominator.Histo1D(("h_dimuon_pT", "; Dimuon pT (GeV); Events/0.3 GeV", 100, 0, 200), "dimuon_pt")
         histos["h_dimuon_eta"] = df_denominator.Histo1D(("h_dimuon_eta", "; Dimuon eta; Events/0.1", 50, -2.5, 2.5), "dimuon_eta")
         #Check kinematics of J/Psi (pT and eta) in the lxy [3.1, 7.0] region
-        histos["h_dimuon_pT_eta_lxy_4"] = df_denominator.Filter("abs(dimuon_lxy) > 3.1 && abs(dimuon_lxy) < 7.0").Histo2D(("h_dimuon_pT_eta_lxy_4", "; Dimuon pT (GeV); Dimuon eta; Events", 100, 0, 30, 50, -2.5, 2.5), "dimuon_pt", "dimuon_eta")
+        histos["h_dimuon_pT_eta_lxy_4"] = df_denominator.Filter("abs(dimuon_lxy) > 3.1 && abs(dimuon_lxy) < 7.0").Histo2D(("h_dimuon_pT_eta_lxy_4", "; Dimuon pT (GeV); Dimuon eta; Events", len(jpsi_pt_bins_2d_kine)-1, jpsi_pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "dimuon_pt", "dimuon_eta")
         #Draw 2D histogram of J/Psi pT vs Lxy using non uniform bins
-        pt_bins_2d = array('d',[3.0, 5.0, 10.0, 15.0, 30.0])
-        lxy_bins_2d = array('d',[0.0, 0.2, 1.0, 2.4, 3.1, 7.0, 11.0, 16.0, 70.0])
-        histos["h_dimuon_pT_lxy"] = df_denominator.Histo2D(("h_dimuon_pT_lxy", "; Dimuon pT (GeV); Dimuon Lxy (cm); Events", len(pt_bins_2d)-1, pt_bins_2d, len(lxy_bins_2d)-1, lxy_bins_2d), "dimuon_pt", "dimuon_lxy")
+        histos["h_dimuon_pT_lxy"] = df_denominator.Histo2D(("h_dimuon_pT_lxy", "; Dimuon pT (GeV); Dimuon Lxy (cm); Events", len(jpsi_pt_bins_2d_kine)-1, jpsi_pt_bins_2d_kine, len(lxy_bins_2d)-1, lxy_bins_2d), "dimuon_pt", "dimuon_lxy")
 
         histo_file = ROOT.TFile.Open(create_file_dir(self.output().path), "RECREATE")
         for histo in histos.values():
@@ -218,6 +220,9 @@ class TriggerSFScoutingSnTMC(TriggerSFScoutingSnT):
 
         df_orthogonal = df.Define("OrthoTrigger", ortho_trigs).Define("MuTrigger", muscouting_trigs)
 
+        # Normally commented for stats
+        #df_orthogonal = df_orthogonal.Filter("OrthoTrigger==true")
+
         # Denominator definition
         # Kinematic cuts on muons
         df_denominator = df_orthogonal.Define("nMuon", "Muon_pt.size()").Filter("nMuon==2").Filter("(Muon_pt[0]>3.0)&&(Muon_pt[1]>3.0)").Filter("(std::abs(Muon_eta[0])<2.4)&&(std::abs(Muon_eta[1])<2.4)").Filter("Muon_ch[0]!=Muon_ch[1]")
@@ -231,10 +236,8 @@ class TriggerSFScoutingSnTMC(TriggerSFScoutingSnT):
         df_denominator = df_denominator.Define("dimuon_system", "make_dimuon_system(SV_lxy, SV_x, SV_y, SV_z, Muon_pt, Muon_eta, Muon_phiCorr, Muon_dxy, CommonVertexIdx)")
         df_denominator = df_denominator.Define("subleading_pt", "dimuon_system.subleading_pt").Define("min_dxy", "dimuon_system.min_dxy").Define("dimuon_lxy", "dimuon_system.dimuon_lxy").Define("dimuon_dr", "dimuon_system.dimuon_dr").Define("dimuon_mass", "dimuon_system.dimuon_mass").Define("dimuon_pt", "dimuon_system.dimuon_pt").Define("dimuon_eta", "dimuon_system.dimuon_eta")
 
-
         # Choose resonance (J/Psi)
         df_denominator = df_denominator.Filter("(dimuon_mass>2.6) && (dimuon_mass<3.4)")
-
         df_pass = df_denominator.Filter("MuTrigger==true")
 
         lxy_bins = [
@@ -315,17 +318,21 @@ class TriggerSFScoutingSnTMC(TriggerSFScoutingSnT):
 
         #Overall kinematics
         pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0])
+        jpsi_pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0, 80.0, 200.0])
         eta_bins_2d_kine = array('d',[-2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5])
-        histos["h_sublead_pT_dimuon_eta"] = df_denominator.Histo2D(("h_sublead_pT_dimuon_eta", "; Subleading muon pT (GeV); Dimuon eta; Events", len(pt_bins_2d_kine)-1, pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "subleading_pt", "dimuon_eta")
+        lxy_bins_2d = array('d',[0.0, 0.2, 1.0, 2.4, 3.1, 7.0, 11.0, 16.0, 70.0])
+
+        #These are kinematics for events passing the Mu trigger and SV selections (for reweighting)
+        histos["h_sublead_pT_dimuon_eta"] = df_pass.Histo2D(("h_sublead_pT_dimuon_eta", "; Subleading muon pT (GeV); Dimuon eta; Events", len(pt_bins_2d_kine)-1, pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "subleading_pt", "dimuon_eta")
+
+        # J/Psi kinematics
         histos["h_sublead_pT"] = df_denominator.Histo1D(("h_sublead_pT", "; Subleading muon pT (GeV); Events/0.3 GeV", 100, 0, 30), "subleading_pt")
         histos["h_dimuon_pT"] = df_denominator.Histo1D(("h_dimuon_pT", "; Dimuon pT (GeV); Events/0.3 GeV", 100, 0, 200), "dimuon_pt")
         histos["h_dimuon_eta"] = df_denominator.Histo1D(("h_dimuon_eta", "; Dimuon eta; Events/0.1", 50, -2.5, 2.5), "dimuon_eta")
         #Check kinematics of J/Psi (pT and eta) in the lxy [3.1, 7.0] region
-        histos["h_dimuon_pT_eta_lxy_4"] = df_denominator.Filter("abs(dimuon_lxy) > 3.1 && abs(dimuon_lxy) < 7.0").Histo2D(("h_dimuon_pT_eta_lxy_4", "; Dimuon pT (GeV); Dimuon eta; Events", 100, 0, 30, 50, -2.5, 2.5), "dimuon_pt", "dimuon_eta")
+        histos["h_dimuon_pT_eta_lxy_4"] = df_denominator.Filter("abs(dimuon_lxy) > 3.1 && abs(dimuon_lxy) < 7.0").Histo2D(("h_dimuon_pT_eta_lxy_4", "; Dimuon pT (GeV); Dimuon eta; Events", len(jpsi_pt_bins_2d_kine)-1, jpsi_pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "dimuon_pt", "dimuon_eta")
         #Draw 2D histogram of J/Psi pT vs Lxy using non uniform bins
-        pt_bins_2d = array('d',[3.0, 5.0, 10.0, 15.0, 30.0])
-        lxy_bins_2d = array('d',[0.0, 0.2, 1.0, 2.4, 3.1, 7.0, 11.0, 16.0, 70.0])
-        histos["h_dimuon_pT_lxy"] = df_denominator.Histo2D(("h_dimuon_pT_lxy", "; Dimuon pT (GeV); Dimuon Lxy (cm); Events", len(pt_bins_2d)-1, pt_bins_2d, len(lxy_bins_2d)-1, lxy_bins_2d), "dimuon_pt", "dimuon_lxy")
+        histos["h_dimuon_pT_lxy"] = df_denominator.Histo2D(("h_dimuon_pT_lxy", "; Dimuon pT (GeV); Dimuon Lxy (cm); Events", len(jpsi_pt_bins_2d_kine)-1, jpsi_pt_bins_2d_kine, len(lxy_bins_2d)-1, lxy_bins_2d), "dimuon_pt", "dimuon_lxy")
 
         histo_file = ROOT.TFile.Open(create_file_dir(self.output().path), "RECREATE")
         for histo in histos.values():

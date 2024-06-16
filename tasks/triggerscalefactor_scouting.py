@@ -214,6 +214,8 @@ class TriggerSFScoutingMC(TriggerSFScouting):
         #Define orthogonal dataframe
         df_orthogonal = df.Define("OrthoTrigger", ortho_trigs).Define("MuTrigger", muscouting_trigs)
 
+        #df_orthogonal = df_orthogonal.Filter("OrthoTrigger==true")
+
         #Now get the denominator
         #Muon and SV selection
         df_denominator = df_orthogonal.Filter("nMuon==2").Filter("(Muon_pt[0]>3.0)&&(Muon_pt[1]>3.0)").Filter("(std::abs(Muon_eta[0])<2.4)&&(std::abs(Muon_eta[1])<2.4)").Filter("Muon_charge[0]!=Muon_charge[1]")
