@@ -81,7 +81,8 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
 
         eg_trigs = "(L1_DoubleEG_LooseIso16_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso18_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso20_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso22_LooseIso12_er1p5==true)||(L1_SingleLooseIsoEG28er2p1==true)||(L1_SingleLooseIsoEG28er1p5==true)||(L1_SingleLooseIsoEG30er1p5==true)||(L1_SingleIsoEG28er2p1==true)||(L1_SingleIsoEG30er2p1==true)||(L1_SingleIsoEG32er2p1==true)"
         jet_trigs = "(L1_HTT200er==true)||(L1_HTT255er==true)||(L1_HTT280er==true)||(L1_HTT320er==true)||(L1_HTT360er==true)||(L1_HTT400er==true)||(L1_HTT450er==true)||(L1_ETT2000==true)||(L1_SingleJet180==true)||(L1_SingleJet200==true)||(L1_DoubleJet30er2p5_Mass_Min300_dEta_Max1p5==true)||(L1_DoubleJet30er2p5_Mass_Min330_dEta_Max1p5==true)||(L1_DoubleJet30er2p5_Mass_Min360_dEta_Max1p5==true)"
-        ortho_trigs = eg_trigs + "||" + jet_trigs
+        ortho_trigs = eg_trigs
+        #ortho_trigs = eg_trigs + "||" + jet_trigs
         muscouting_trigs = "(L1_DoubleMu_15_7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_Min7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_7to18==true)||(L1_DoubleMu4_SQ_OS_dR_Max1p2==true)||(L1_DoubleMu4p5_SQ_OS_dR_Max1p2==true)"
 
         #df_orthogonal = df.Define("MuTrigger", muscouting_trigs)
@@ -104,6 +105,8 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
 
         # Choose resonance (J/Psi)
         df_denominator = df_denominator.Filter("(dimuon_mass>2.6) && (dimuon_mass<3.4)")
+        #Filter on dimuon dR
+        df_denominator = df_denominator.Filter("dimuon_dr < 1.2")
         df_pass = df_denominator.Filter("MuTrigger==true")
 
         lxy_bins = [
@@ -182,7 +185,38 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
             histos["h_lxy_%s_pT_100_pass"%(lxy_bin)] = h_lxy_pT_pass
             histos["h_lxy_%s_pT_100_fail"%(lxy_bin)] = h_lxy_pT_fail
 
+        #dR
+        for dr_bin, dr_filter in enumerate(dr_bins):
+            h_dr_pT_total = df_denominator.Filter(dr_filter).Histo1D(("h_dr_%s_pT_100_total"%(dr_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+            h_dr_pT_pass = df_pass.Filter(dr_filter).Histo1D(("h_dr_%s_pT_100_pass"%(dr_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+
+            h_dr_pT_fail = h_dr_pT_total.GetPtr() - h_dr_pT_pass.GetPtr()
+            h_dr_pT_fail.SetName("h_dr_%s_pT_100_fail"% (dr_bin))
+
+            histos["h_dr_%s_pT_100_pass"%(dr_bin)] = h_dr_pT_pass
+            histos["h_dr_%s_pT_100_fail"%(dr_bin)] = h_dr_pT_fail
+
+        #Factorize in terms of pT
+        for lxy_bin, lxy_filter in enumerate(lxy_bins):
+            h_lxy_pT_0_total = df_denominator.Filter(lxy_filter).Filter("subleading_pt > 3.0 && subleading_pt < 5.0").Histo1D(("h_lxy_%s_pT_50_total"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+            h_lxy_pT_1_total = df_denominator.Filter(lxy_filter).Filter("subleading_pt > 5.0 && subleading_pt < 30.0").Histo1D(("h_lxy_%s_pT_150_total"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+
+            h_lxy_pT_0_pass = df_pass.Filter(lxy_filter).Filter("subleading_pt > 3.0 && subleading_pt < 5.0").Histo1D(("h_lxy_%s_pT_50_pass"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+            h_lxy_pT_1_pass = df_pass.Filter(lxy_filter).Filter("subleading_pt > 5.0 && subleading_pt < 30.0").Histo1D(("h_lxy_%s_pT_150_pass"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+
+            h_lxy_pT_0_fail = h_lxy_pT_0_total.GetPtr() - h_lxy_pT_0_pass.GetPtr()
+            h_lxy_pT_1_fail = h_lxy_pT_1_total.GetPtr() - h_lxy_pT_1_pass.GetPtr()
+
+            h_lxy_pT_0_fail.SetName("h_lxy_%s_pT_50_fail"% (lxy_bin))
+            h_lxy_pT_1_fail.SetName("h_lxy_%s_pT_150_fail"% (lxy_bin))
+
+            histos["h_lxy_%s_pT_50_pass"%(lxy_bin)] = h_lxy_pT_0_pass
+            histos["h_lxy_%s_pT_50_fail"%(lxy_bin)] = h_lxy_pT_0_fail
+            histos["h_lxy_%s_pT_150_pass"%(lxy_bin)] = h_lxy_pT_1_pass
+            histos["h_lxy_%s_pT_150_fail"%(lxy_bin)] = h_lxy_pT_1_fail
+
         #Overall kinematics
+        dr_bins_1d = array('d',[0.0, 0.2, 0.4, 0.6, 1.2, 1.4, 2.0])
         pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0])
         jpsi_pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0, 80.0, 200.0])
         eta_bins_2d_kine = array('d',[-2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5])
@@ -192,6 +226,7 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
         histos["h_sublead_pT_dimuon_eta"] = df_pass.Histo2D(("h_sublead_pT_dimuon_eta", "; Subleading muon pT (GeV); Dimuon eta; Events", len(pt_bins_2d_kine)-1, pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "subleading_pt", "dimuon_eta")
 
         # J/Psi kinematics
+        histos["h_dimuon_dr"] = df_denominator.Histo1D(("h_dimuon_dr", "; Dimuon dR; Events", len(dr_bins_1d)-1, dr_bins_1d), "dimuon_dr") 
         histos["h_sublead_pT"] = df_denominator.Histo1D(("h_sublead_pT", "; Subleading muon pT (GeV); Events/0.3 GeV", 100, 0, 30), "subleading_pt")
         histos["h_dimuon_pT"] = df_denominator.Histo1D(("h_dimuon_pT", "; Dimuon pT (GeV); Events/0.3 GeV", 100, 0, 200), "dimuon_pt")
         histos["h_dimuon_eta"] = df_denominator.Histo1D(("h_dimuon_eta", "; Dimuon eta; Events/0.1", 50, -2.5, 2.5), "dimuon_eta")
@@ -238,6 +273,8 @@ class TriggerSFScoutingSnTMC(TriggerSFScoutingSnT):
 
         # Choose resonance (J/Psi)
         df_denominator = df_denominator.Filter("(dimuon_mass>2.6) && (dimuon_mass<3.4)")
+        #Filter on dimuon dR
+        df_denominator = df_denominator.Filter("dimuon_dr < 1.2")
         df_pass = df_denominator.Filter("MuTrigger==true")
 
         lxy_bins = [
@@ -315,8 +352,39 @@ class TriggerSFScoutingSnTMC(TriggerSFScoutingSnT):
 
             histos["h_lxy_%s_pT_100_pass"%(lxy_bin)] = h_lxy_pT_pass
             histos["h_lxy_%s_pT_100_fail"%(lxy_bin)] = h_lxy_pT_fail
+        
+        #dR
+        for dr_bin, dr_filter in enumerate(dr_bins):
+            h_dr_pT_total = df_denominator.Filter(dr_filter).Histo1D(("h_dr_%s_pT_100_total"%(dr_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+            h_dr_pT_pass = df_pass.Filter(dr_filter).Histo1D(("h_dr_%s_pT_100_pass"%(dr_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+
+            h_dr_pT_fail = h_dr_pT_total.GetPtr() - h_dr_pT_pass.GetPtr()
+            h_dr_pT_fail.SetName("h_dr_%s_pT_100_fail"% (dr_bin))
+
+            histos["h_dr_%s_pT_100_pass"%(dr_bin)] = h_dr_pT_pass
+            histos["h_dr_%s_pT_100_fail"%(dr_bin)] = h_dr_pT_fail
+
+        #Factorize in terms of pT
+        for lxy_bin, lxy_filter in enumerate(lxy_bins):
+            h_lxy_pT_0_total = df_denominator.Filter(lxy_filter).Filter("subleading_pt > 3.0 && subleading_pt < 5.0").Histo1D(("h_lxy_%s_pT_50_total"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+            h_lxy_pT_1_total = df_denominator.Filter(lxy_filter).Filter("subleading_pt > 5.0 && subleading_pt < 30.0").Histo1D(("h_lxy_%s_pT_150_total"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+
+            h_lxy_pT_0_pass = df_pass.Filter(lxy_filter).Filter("subleading_pt > 3.0 && subleading_pt < 5.0").Histo1D(("h_lxy_%s_pT_50_pass"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+            h_lxy_pT_1_pass = df_pass.Filter(lxy_filter).Filter("subleading_pt > 5.0 && subleading_pt < 30.0").Histo1D(("h_lxy_%s_pT_150_pass"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
+
+            h_lxy_pT_0_fail = h_lxy_pT_0_total.GetPtr() - h_lxy_pT_0_pass.GetPtr()
+            h_lxy_pT_1_fail = h_lxy_pT_1_total.GetPtr() - h_lxy_pT_1_pass.GetPtr()
+
+            h_lxy_pT_0_fail.SetName("h_lxy_%s_pT_50_fail"% (lxy_bin))
+            h_lxy_pT_1_fail.SetName("h_lxy_%s_pT_150_fail"% (lxy_bin))
+
+            histos["h_lxy_%s_pT_50_pass"%(lxy_bin)] = h_lxy_pT_0_pass
+            histos["h_lxy_%s_pT_50_fail"%(lxy_bin)] = h_lxy_pT_0_fail
+            histos["h_lxy_%s_pT_150_pass"%(lxy_bin)] = h_lxy_pT_1_pass
+            histos["h_lxy_%s_pT_150_fail"%(lxy_bin)] = h_lxy_pT_1_fail
 
         #Overall kinematics
+        dr_bins_1d = array('d',[0.0, 0.2, 0.4, 0.6, 1.2, 1.4, 2.0])
         pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0])
         jpsi_pt_bins_2d_kine = array('d',[0.0, 3.0, 5.0, 10.0, 15.0, 30.0, 50.0, 80.0, 200.0])
         eta_bins_2d_kine = array('d',[-2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5])
@@ -326,6 +394,7 @@ class TriggerSFScoutingSnTMC(TriggerSFScoutingSnT):
         histos["h_sublead_pT_dimuon_eta"] = df_pass.Histo2D(("h_sublead_pT_dimuon_eta", "; Subleading muon pT (GeV); Dimuon eta; Events", len(pt_bins_2d_kine)-1, pt_bins_2d_kine, len(eta_bins_2d_kine)-1, eta_bins_2d_kine), "subleading_pt", "dimuon_eta")
 
         # J/Psi kinematics
+        histos["h_dimuon_dr"] = df_denominator.Histo1D(("h_dimuon_dr", "; Dimuon dR; Events", len(dr_bins_1d)-1, dr_bins_1d), "dimuon_dr") 
         histos["h_sublead_pT"] = df_denominator.Histo1D(("h_sublead_pT", "; Subleading muon pT (GeV); Events/0.3 GeV", 100, 0, 30), "subleading_pt")
         histos["h_dimuon_pT"] = df_denominator.Histo1D(("h_dimuon_pT", "; Dimuon pT (GeV); Events/0.3 GeV", 100, 0, 200), "dimuon_pt")
         histos["h_dimuon_eta"] = df_denominator.Histo1D(("h_dimuon_eta", "; Dimuon eta; Events/0.1", 50, -2.5, 2.5), "dimuon_eta")

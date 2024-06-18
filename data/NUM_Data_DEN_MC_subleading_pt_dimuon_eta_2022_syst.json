@@ -1,0 +1,1715 @@
+{
+    "schema_version": 2,
+    "corrections": [
+        {
+            "name": "NUM_Data_DEN_MC_sublead_pt_dimuon_eta_2022_syst",
+            "description": "NUM_Data_DEN_MC_subleading_pt_dimuon_eta_2022_syst",
+            "version": 1,
+            "inputs": [
+                {
+                    "name": "sublead_pT",
+                    "type": "real",
+                    "description": "Subleading muon pT"
+                },
+                {
+                    "name": "dimuon_eta",
+                    "type": "real",
+                    "description": "Dimuon eta"
+                },
+                {
+                    "name": "ValType",
+                    "type": "string",
+                    "description": "sf or syst (currently 'sf' is nominal, and 'systup' and 'systdown' are up/down variations with total stat+syst uncertainties"
+                }
+            ],
+            "output": {
+                "name": "weight",
+                "type": "real",
+                "description": "Output scale factor (nominal) or uncertainty"
+            },
+            "data": {
+                "nodetype": "binning",
+                "input": "sublead_pT",
+                "edges": [
+                    0.0,
+                    3.0,
+                    5.0,
+                    10.0,
+                    15.0,
+                    30.0,
+                    50.0,
+                    Infinity
+                ],
+                "content": [
+                    {
+                        "nodetype": "binning",
+                        "input": "dimuon_eta",
+                        "edges": [
+                            -Infinity,
+                            -2.5,
+                            -2.0,
+                            -1.5,
+                            -1.0,
+                            -0.5,
+                            0.0,
+                            0.5,
+                            1.0,
+                            1.5,
+                            2.0,
+                            2.5,
+                            Infinity
+                        ],
+                        "content": [
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.5597852515796555
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.6594344905324407
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.4601360126268703
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.5552246260009506
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.6743966636617884
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.4360525883401127
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.5907819916800598
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.7427576397584787
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.438806343601641
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.243461003167092
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.36938785029684
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.1175341560373442
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.594346258201178
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.7988849584846032
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.389807557917753
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.500018852605812
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.6864642334663182
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.3135734717453058
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.3184471853229247
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.456988361981618
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.1799060086642315
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.4449650896779407
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.5771594650798941
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.3127707142759872
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.258976788915457
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.3473434254369434
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.1706101523939707
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.242858106247908
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.315775284413712
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.169940928082104
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            }
+                        ],
+                        "flow": "error"
+                    },
+                    {
+                        "nodetype": "binning",
+                        "input": "dimuon_eta",
+                        "edges": [
+                            -Infinity,
+                            -2.5,
+                            -2.0,
+                            -1.5,
+                            -1.0,
+                            -0.5,
+                            0.0,
+                            0.5,
+                            1.0,
+                            1.5,
+                            2.0,
+                            2.5,
+                            Infinity
+                        ],
+                        "content": [
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.2038433877365322
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.2215132393306949
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.1861735361423695
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0140512452013284
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0308033906352285
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9972990997674283
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9615831231483352
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.9805213151752155
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9426449311214549
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.077344058653332
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.1039520618371246
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0507360554695395
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0884007873928871
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.118536209186457
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0582653655993173
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.1376061393573704
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.1698845323336697
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.1053277463810711
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0192291461975547
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0438024516332307
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9946558407618787
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9485509732910596
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.9672766829465671
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9298252636355522
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8416235609450189
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.8545032311179261
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8287438907721116
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9035040711825925
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.9152957122926311
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8917124300725539
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            }
+                        ],
+                        "flow": "error"
+                    },
+                    {
+                        "nodetype": "binning",
+                        "input": "dimuon_eta",
+                        "edges": [
+                            -Infinity,
+                            -2.5,
+                            -2.0,
+                            -1.5,
+                            -1.0,
+                            -0.5,
+                            0.0,
+                            0.5,
+                            1.0,
+                            1.5,
+                            2.0,
+                            2.5,
+                            Infinity
+                        ],
+                        "content": [
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.3701037744194091
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.389983073802042
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.3502244750367762
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0502083115026706
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0665419090921344
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0338747139132067
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9236441252637563
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.940125834485359
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9071624160421535
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9218908051052936
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.9411457771232924
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9026358330872949
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8272140125584511
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.845176473191912
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8092515519249901
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8062530191820533
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.8234782385975111
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.7890277997665954
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8287165376330942
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.845177028661629
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8122560466045593
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8292051286126466
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.8433290681005907
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8150811891247025
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8400967600727344
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.8519840810700859
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8282094390753828
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9595875953289947
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.9715537642779238
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9476214263800656
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            }
+                        ],
+                        "flow": "error"
+                    },
+                    {
+                        "nodetype": "binning",
+                        "input": "dimuon_eta",
+                        "edges": [
+                            -Infinity,
+                            -2.5,
+                            -2.0,
+                            -1.5,
+                            -1.0,
+                            -0.5,
+                            0.0,
+                            0.5,
+                            1.0,
+                            1.5,
+                            2.0,
+                            2.5,
+                            Infinity
+                        ],
+                        "content": [
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.3198028216764262
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.379145429332946
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.2604602140199064
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9238100703187645
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.9652649762130532
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8823551644244758
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8393773122384078
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.882827302975316
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.7959273215014997
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.6976400288554766
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.7363345785977085
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.6589454791132447
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.6006563745157731
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.6348400053493567
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.5664727436821896
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.6885799780057261
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.7301418829071158
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.6470180731043365
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.600261738726505
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.6311753010966802
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.5693481763563298
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.6771322280584549
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.7088849832770261
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.6453794728398836
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.7481449037665124
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.7790489869598924
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.7172408205731324
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8676731923606529
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.900354584117694
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8349918006036118
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            }
+                        ],
+                        "flow": "error"
+                    },
+                    {
+                        "nodetype": "binning",
+                        "input": "dimuon_eta",
+                        "edges": [
+                            -Infinity,
+                            -2.5,
+                            -2.0,
+                            -1.5,
+                            -1.0,
+                            -0.5,
+                            0.0,
+                            0.5,
+                            1.0,
+                            1.5,
+                            2.0,
+                            2.5,
+                            Infinity
+                        ],
+                        "content": [
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 2.275542920610357
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 2.4801758543132113
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 2.0709099869075027
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.6009307889202762
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.7455660696554478
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.4562955081851046
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.5708370149730955
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.7405646168360398
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.4011094131101511
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.1167144384187762
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.236776586907507
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.9966522899300454
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9991388275668123
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.1126257133415174
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8856519417921073
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.8367660456063789
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 0.9238612044230838
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.749670886789674
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9116353007735924
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0009091789923799
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8223614225548052
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 0.9648387716193016
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0475396364077174
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 0.8821379068308859
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.4159857144394437
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.5390405316650664
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.292930897213821
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.525545364123338
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.6414356060918882
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.409655122154788
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            }
+                        ],
+                        "flow": "error"
+                    },
+                    {
+                        "nodetype": "binning",
+                        "input": "dimuon_eta",
+                        "edges": [
+                            -Infinity,
+                            -2.5,
+                            -2.0,
+                            -1.5,
+                            -1.0,
+                            -0.5,
+                            0.0,
+                            0.5,
+                            1.0,
+                            1.5,
+                            2.0,
+                            2.5,
+                            Infinity
+                        ],
+                        "content": [
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 48.22117430358666
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 69.78775003422956
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 26.65459857294376
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 22.07450749229642
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 30.419079542494416
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 13.729935442098423
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 50.11680359075131
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 85.55696623675249
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 14.676640944750133
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 8.447192924536573
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 11.434841938651818
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 5.459543910421328
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 13.866995201545706
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 20.802070210506585
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 6.931920192584824
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 6.138568726559609
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 8.185809757010823
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 4.091327696108395
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 17.179929208740926
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 25.77147125589475
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 8.588387161587104
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 10.956170750567727
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 14.609279241110162
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 7.303062260025293
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 24.88907405723012
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 35.05128400558744
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 14.726864108872794
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 33.05271438743204
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 45.54665864963697
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 20.558770125227113
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            }
+                        ],
+                        "flow": "error"
+                    },
+                    {
+                        "nodetype": "binning",
+                        "input": "dimuon_eta",
+                        "edges": [
+                            -Infinity,
+                            -2.5,
+                            -2.0,
+                            -1.5,
+                            -1.0,
+                            -0.5,
+                            0.0,
+                            0.5,
+                            1.0,
+                            1.5,
+                            2.0,
+                            2.5,
+                            Infinity
+                        ],
+                        "content": [
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            },
+                            {
+                                "nodetype": "category",
+                                "input": "ValType",
+                                "content": [
+                                    {
+                                        "key": "sf",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systup",
+                                        "value": 1.0
+                                    },
+                                    {
+                                        "key": "systdown",
+                                        "value": 1.0
+                                    }
+                                ]
+                            }
+                        ],
+                        "flow": "error"
+                    }
+                ],
+                "flow": "error"
+            }
+        }
+    ]
+}
