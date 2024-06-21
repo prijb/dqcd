@@ -13,6 +13,12 @@ class Config(legacy_config):
         eos_path = "/eos/user/j/jleonhol/scouting_2022/"
         sample_path = "/vols/cms/pb4918/StoreNTuple/SnTScouting/Data/"
         datasets = [
+            Dataset("Scouting2022BLocal",
+                folder = "/vols/cms/pb4918/StoreNTuple/SnTScouting/LooperOutputv2/",
+                process = self.processes.get("Scouting2022B"),
+                file_pattern = "output_DataB(.*).root",
+                check_empty=False,
+            ),
             Dataset("Scouting2022CLocal",
                 folder = "/vols/cms/pb4918/StoreNTuple/SnTScouting/LooperOutputv2/",
                 process = self.processes.get("Scouting2022C"),
@@ -77,42 +83,28 @@ class Config(legacy_config):
     def add_categories(self):
         categories = [
             Category("base", label="base", selection="evtn >= 0"),
-            Category("presel_cat1", "Preselection, cat. 1", selection="""DimuonLxyDenom[(DimuonLxyDenom > 0.0) && (DimuonLxyDenom < 0.2)].size() > 0"""),
-            Category("presel_cat4", "Preselection, cat. 4", selection="""DimuonLxyDenom[(DimuonLxyDenom > 2.4) && (DimuonLxyDenom < 3.1)].size() > 0"""),
-            Category("sel_cat1", "Selection, cat. 1", selection="""(DimuonLxyPassBest > 0.0) && (DimuonLxyPassBest < 0.2)"""),
-            Category("sel_cat4", "Selection, cat. 4", selection="""(DimuonLxyPassBest > 2.4) && (DimuonLxyPassBest < 3.1)""")
+            Category("cat1", "Selection, cat. 1", selection="""(DimuonBestLxy > 0.0) && (DimuonBestLxy < 0.2)"""),
+            Category("cat2", "Selection, cat. 2", selection="""(DimuonBestLxy > 0.2) && (DimuonBestLxy < 1.0)"""),
+            Category("cat3", "Selection, cat. 3", selection="""(DimuonBestLxy > 1.0) && (DimuonBestLxy < 2.4)"""),
+            Category("cat4", "Selection, cat. 4", selection="""(DimuonBestLxy > 2.4) && (DimuonBestLxy < 3.1)"""),
+            Category("cat5", "Selection, cat. 5", selection="""(DimuonBestLxy > 3.1) && (DimuonBestLxy < 7.0)"""),
+            Category("cat6", "Selection, cat. 6", selection="""(DimuonBestLxy > 7.0) && (DimuonBestLxy < 11.0)"""),
+            Category("cat7", "Selection, cat. 7", selection="""(DimuonBestLxy > 11.0) && (DimuonBestLxy < 16.0)"""),
+            Category("cat8", "Selection, cat. 8", selection="""(DimuonBestLxy > 16.0) && (DimuonBestLxy < 70.0)""")
         ]
         return ObjectCollection(categories)
 
     def add_features(self):
         features = [
-            Feature("JPsi_mass_denom", "DimuonMassDenom",
+            Feature("JPsi_mass_denom", "DimuonBestMass",
                 binning=(30, 2.8, 3.4),
                 x_title=Label("Dimuon mass"),
                 units="GeV"),
-            Feature("JPsi_mass_num", "DimuonMassPassBest",
+            Feature("JPsi_mass_num", "DimuonBestMass",
+                selection="DimuonBestPass==1",
                 binning=(30, 2.8, 3.4),
                 x_title=Label("Dimuon mass"),
-                units="GeV"),
-            # Add lxy binned JPsi mass
-            Feature("JPsi_mass_denom_lxy1", "DimuonMassDenom[DimuonLxyDenom > 0.0 && DimuonLxyDenom < 0.2]",
-                binning=(30, 2.8, 3.4),
-                x_title=Label("Dimuon mass"),
-                units="GeV"),
-            Feature("JPsi_mass_num_lxy1", "DimuonMassPassBest",
-                binning=(30, 2.8, 3.4),
-                x_title=Label("Dimuon mass"),
-                selection="DimuonLxyPassBest > 0.0 && DimuonLxyPassBest < 0.2",
-                units="GeV"),
-            Feature("JPsi_mass_denom_lxy4", "DimuonMassDenom[DimuonLxyDenom > 2.4 && DimuonLxyDenom < 3.1]",
-                binning=(30, 2.8, 3.4),
-                x_title=Label("Dimuon mass"),
-                units="GeV"),
-            Feature("JPsi_mass_num_lxy4", "DimuonMassPassBest",
-                binning=(30, 2.8, 3.4),
-                x_title=Label("Dimuon mass"),
-                selection="DimuonLxyPassBest > 2.4 && DimuonLxyPassBest < 3.1",
-                units="GeV"),
+                units="GeV")
         ]
         return ObjectCollection(features)
 

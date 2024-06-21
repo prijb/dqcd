@@ -286,12 +286,13 @@ class Config(cmt_config):
             Process("LambdaBToJpsiLambda", Label("LambdaBToJpsiLambda"), color=(0, 0, 0), parent_process="background"),
             Process("BToJpsiJPsiToMuMu", Label("BToJpsiJPsiToMuMu"), color=(0, 0, 0), parent_process="background"),
             Process("BuToJpsiK", Label("BuToJpsiK"), color=(0, 0, 0), parent_process="background"),
-            Process("Scouting2022C", Label("Data"), color=(0,0,0), parent_process="data"), #SnT SFs
-            Process("Scouting2022D", Label("Data"), color=(0,0,0), parent_process="data"), #SnT SFs
-            Process("Scouting2022E", Label("Data"), color=(0,0,0), parent_process="data"), #SnT SFs
-            Process("Scouting2022F", Label("Data"), color=(0,0,0), parent_process="data"), #SnT SFs
-            Process("Scouting2022G", Label("Data"), color=(0,0,0), parent_process="data"), #SnT SFs
-            Process("DileptonMinBias", Label("DileptonMinBias"), color=(0,0,0), parent_process="background"), #SnT SFs
+            Process("Scouting2022B", Label("Data"), color=(0,0,0), parent_process="data", isData=True), #SnT SFs
+            Process("Scouting2022C", Label("Data"), color=(0,0,0), parent_process="data", isData=True), #SnT SFs
+            Process("Scouting2022D", Label("Data"), color=(0,0,0), parent_process="data", isData=True), #SnT SFs
+            Process("Scouting2022E", Label("Data"), color=(0,0,0), parent_process="data", isData=True), #SnT SFs
+            Process("Scouting2022F", Label("Data"), color=(0,0,0), parent_process="data", isData=True), #SnT SFs
+            Process("Scouting2022G", Label("Data"), color=(0,0,0), parent_process="data", isData=True), #SnT SFs
+            Process("DileptonMinBias", Label("DileptonMinBias"), color=(0,0,0), parent_process="background", isData=False, isMC=True), #SnT SFs
 
         ]
 

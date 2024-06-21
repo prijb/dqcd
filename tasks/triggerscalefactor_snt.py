@@ -81,8 +81,8 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
 
         eg_trigs = "(L1_DoubleEG_LooseIso16_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso18_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso20_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso22_LooseIso12_er1p5==true)||(L1_SingleLooseIsoEG28er2p1==true)||(L1_SingleLooseIsoEG28er1p5==true)||(L1_SingleLooseIsoEG30er1p5==true)||(L1_SingleIsoEG28er2p1==true)||(L1_SingleIsoEG30er2p1==true)||(L1_SingleIsoEG32er2p1==true)"
         jet_trigs = "(L1_HTT200er==true)||(L1_HTT255er==true)||(L1_HTT280er==true)||(L1_HTT320er==true)||(L1_HTT360er==true)||(L1_HTT400er==true)||(L1_HTT450er==true)||(L1_ETT2000==true)||(L1_SingleJet180==true)||(L1_SingleJet200==true)||(L1_DoubleJet30er2p5_Mass_Min300_dEta_Max1p5==true)||(L1_DoubleJet30er2p5_Mass_Min330_dEta_Max1p5==true)||(L1_DoubleJet30er2p5_Mass_Min360_dEta_Max1p5==true)"
-        ortho_trigs = eg_trigs
-        #ortho_trigs = eg_trigs + "||" + jet_trigs
+        #ortho_trigs = eg_trigs
+        ortho_trigs = eg_trigs + "||" + jet_trigs
         muscouting_trigs = "(L1_DoubleMu_15_7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_Min7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_7to18==true)||(L1_DoubleMu4_SQ_OS_dR_Max1p2==true)||(L1_DoubleMu4p5_SQ_OS_dR_Max1p2==true)"
 
         #df_orthogonal = df.Define("MuTrigger", muscouting_trigs)
@@ -196,7 +196,7 @@ class TriggerSFScoutingSnT(DatasetTaskWithCategory, law.LocalWorkflow, HTCondorW
             histos["h_dr_%s_pT_100_pass"%(dr_bin)] = h_dr_pT_pass
             histos["h_dr_%s_pT_100_fail"%(dr_bin)] = h_dr_pT_fail
 
-        #Factorize in terms of pT
+        #Factorize in terms of pT (pT_50 is pt < 5 and pT_150 is pt > 5)
         for lxy_bin, lxy_filter in enumerate(lxy_bins):
             h_lxy_pT_0_total = df_denominator.Filter(lxy_filter).Filter("subleading_pt > 3.0 && subleading_pt < 5.0").Histo1D(("h_lxy_%s_pT_50_total"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")
             h_lxy_pT_1_total = df_denominator.Filter(lxy_filter).Filter("subleading_pt > 5.0 && subleading_pt < 30.0").Histo1D(("h_lxy_%s_pT_150_total"%(lxy_bin), "; Dimuon mass (GeV); Events/0.027 GeV", 30, 2.6, 3.4), "dimuon_mass")

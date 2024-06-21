@@ -1,0 +1,9 @@
+dimuon_syst:
+    name: SnTMakeDimuonsRDFSyst
+    path: modules.dimuon_selection
+
+trigsf:
+    name: SnTDimuonReweight
+    path: modules.dimuon_reweight
+    parameters:
+        isMC: self.dataset.process.isMC
