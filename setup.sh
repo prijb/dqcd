@@ -10,7 +10,7 @@ action() {
     #local this_file="$( [ ! -z "$ZSH_VERSION" ] && echo "${(%):-%x}" || echo "${BASH_SOURCE[0]}" )"
     #local this_dir="$( cd "$( dirname "$this_file" )" && pwd )"
     #export CMT_BASE=$PWD
-    export CMT_BASE="DUMMY"
+    export CMT_BASE="/vols/cms/pb4918/dqcd_analysis/Oct24/dqcd/nanoaod_base_analysis"
     if [[ "$CMT_BASE" == "DUMMY" ]]; then
         echo "Need to change the path stored in CMT_BASE to the present folder"
         return "1"
@@ -303,6 +303,7 @@ action() {
             cmt_pip_install flake8
             cmt_pip_install luigi==2.8.13
             cmt_pip_install tabulate
+            cmt_pip_install setuptools==70.0.0
             cmt_pip_install git+https://gitlab.cern.ch/cms-phys-ciemat/analysis_tools.git
             cmt_pip_install git+https://gitlab.cern.ch/cms-phys-ciemat/plotting_tools.git
             cmt_pip_install --no-deps git+https://github.com/riga/law
