@@ -138,7 +138,7 @@ class Config(legacy_config):
                 binning=(15000, 0.0, 150.0),
                 x_title=Label("Dimuon mass"),
                 units="GeV"
-            )
+            ),
             Feature("DimuonMassPassMinusMaterialVeto", "EventDimuonsBestMass",
                 selection="EventDimuonsBestPassMinusMaterialVeto==true",
                 binning=(15000, 0.0, 150.0),

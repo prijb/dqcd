@@ -5,6 +5,9 @@ ROOT = import_root()
 
 class SnTMakeDimuonsRDFProducer():
     def __init__(self, *args, **kwargs):
+
+        self.runPeriod = kwargs.pop("runPeriod")
+        self.isData = kwargs.pop("isData")
         
         ROOT.gInterpreter.Declare("""
         #include "DataFormats/Math/interface/deltaR.h"
@@ -193,7 +196,7 @@ class SnTMakeDimuonsRDFProducer():
                 double muon2_reldxysig = TMath::Abs((muon2_dxy*dimuon_pt)/(dimuon_lxy*dimuon_mass));
                                   
                 if(muon1_dxysig < 2.0) pass_cut = false;
-                if(muon2_dxysig < 2.0) pass_cut = false
+                if(muon2_dxysig < 2.0) pass_cut = false;
                 if(muon1_reldxysig < 0.1) pass_cut = false;
                 if(muon2_reldxysig < 0.1) pass_cut = false;
                                   
@@ -225,7 +228,7 @@ class SnTMakeDimuonsRDFProducer():
                 bool pass_cut = true;
                                   
                 //Dependent on displacement
-                dimuon_lxy = dimuons.lxy.at(i);
+                float dimuon_lxy = dimuons.lxy.at(i);
                 if(dimuon_lxy < 11.){
                     if(dimuons.excesshits.at(i) > 0) pass_cut = false;                  
                 }
@@ -312,8 +315,8 @@ class SnTMakeDimuonsRDFProducer():
     def run(self, df):
 
         #Print dataset details (debugging)
-        print("Dataset is data:", self.dataset.process.isData)
-        print("Dataset run period:", self.dataset.runPeriod)
+        print("Dataset is data:", self.isData)
+        print("Dataset run period:", self.runPeriod)
 
         #Define the triggers (year dependent)
         eg_trigs = None
@@ -321,13 +324,13 @@ class SnTMakeDimuonsRDFProducer():
         ortho_trigs = None
         mu_trigs = None
 
-        if self.dataset.runPeriod == "2022":
+        if self.runPeriod == "2022":
             eg_trigs = "(L1_DoubleEG_LooseIso16_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso18_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso20_LooseIso12_er1p5==true)||(L1_DoubleEG_LooseIso22_LooseIso12_er1p5==true)||(L1_SingleLooseIsoEG28er2p1==true)||(L1_SingleLooseIsoEG28er1p5==true)||(L1_SingleLooseIsoEG30er1p5==true)||(L1_SingleIsoEG28er2p1==true)||(L1_SingleIsoEG30er2p1==true)||(L1_SingleIsoEG32er2p1==true)"
             jet_trigs = "(L1_HTT200er==true)||(L1_HTT255er==true)||(L1_HTT280er==true)||(L1_HTT320er==true)||(L1_HTT360er==true)||(L1_HTT400er==true)||(L1_HTT450er==true)||(L1_ETT2000==true)||(L1_SingleJet180==true)||(L1_SingleJet200==true)||(L1_DoubleJet30er2p5_Mass_Min300_dEta_Max1p5==true)||(L1_DoubleJet30er2p5_Mass_Min330_dEta_Max1p5==true)||(L1_DoubleJet30er2p5_Mass_Min360_dEta_Max1p5==true)"
             ortho_trigs = eg_trigs + "||" + jet_trigs
             mu_trigs = "(L1_DoubleMu_15_7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_Min7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_7to18==true)||(L1_DoubleMu4_SQ_OS_dR_Max1p2==true)||(L1_DoubleMu4p5_SQ_OS_dR_Max1p2==true)"
         
-        elif self.dataset.runPeriod == "2023":
+        elif self.runPeriod == "2023":
             eg_trigs = "(DST_Run3_EG30_PFScoutingPixelTracking==true)||(DST_Run3_EG16_EG12_PFScoutingPixelTracking==true)"
             jet_trigs = "(DST_Run3_JetHT_PFScoutingPixelTracking==true)"
             ortho_trigs = eg_trigs + "||" + jet_trigs
@@ -341,10 +344,10 @@ class SnTMakeDimuonsRDFProducer():
             mu_trigs = "(L1_DoubleMu_15_7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_Min7==true)||(L1_DoubleMu4p5er2p0_SQ_OS_Mass_7to18==true)||(L1_DoubleMu4_SQ_OS_dR_Max1p2==true)||(L1_DoubleMu4p5_SQ_OS_dR_Max1p2==true)"
 
         df = df.Define("MuTrigger", mu_trigs)
-        df = df.Filter("PassHLT==1").Filter("MuTrigger==true")
+        df = df.Filter("passHLT==1").Filter("MuTrigger==true")
 
         #Make the secondary vertices (only preselection applied)
-        df = df.Define("EventDimuons", "getDenomDimuons(Muon_charge, Muon_pt, Muon_eta, Muon_phi, Muon_phiCorr, Muon_dxyCorr, Muon_dxye, Muon_selected, Muon_bestAssocSVOverlapIdx, Muon_bestAssocSVIdx, Muon_nhitsbeforesv, PV_x, PV_y, PV_z, SV_x, SV_y, SV_z, SV_xe, SV_ye, SV_ze, SV_minDistanceFromDet_x, SV_minDistanceFromDet_y, SV_minDistanceFromDet_z, SV_onModuleWithinUnc, SV_lxy, SV_l3d, SV_prob, SV_selected, SV_index)")
+        df = df.Define("EventDimuons", "getDenomDimuons(Muon_ch, Muon_pt, Muon_eta, Muon_phi, Muon_phiCorr, Muon_dxyCorr, Muon_dxye, Muon_selected, Muon_bestAssocSVOverlapIdx, Muon_bestAssocSVIdx, Muon_nhitsbeforesv, PV_x, PV_y, PV_z, SV_x, SV_y, SV_z, SV_xe, SV_ye, SV_ze, SV_minDistanceFromDet_x, SV_minDistanceFromDet_y, SV_minDistanceFromDet_z, SV_onModuleWithinUnc, SV_lxy, SV_l3d, SV_prob, SV_selected, SV_index)")
         df = df.Define("nDimuons", "EventDimuons.mass.size()")
         #Define the cuts
         df = df.Define("EventDimuonsPassDisplacement", "muDisplacement(EventDimuons)")

@@ -1,3 +1,6 @@
 dimuon_syst:
     name: SnTMakeDimuonsRDF
     path: modules.snt_selection
+    parameters:
+        runPeriod: self.dataset.runPeriod
+        isData: self.dataset.process.isData
