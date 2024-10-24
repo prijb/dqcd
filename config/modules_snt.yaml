@@ -1,0 +1,3 @@
+dimuon_syst:
+    name: SnTMakeDimuonsRDF
+    path: modules.snt_selection

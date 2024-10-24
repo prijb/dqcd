@@ -67,18 +67,20 @@ class Config(legacy_config):
             ),
             #2023
             Dataset("Scouting2023C",
-                folder = "/store/user/ppradeep/Run3ScoutingOutput/LooperOutput2023/",
+                #folder = "/store/user/ppradeep/Run3ScoutingOutput/LooperOutput2023/",
+                folder = "/vols/cms/pb4918/StoreNTuple/SnTScouting/LooperOutput2023/",
                 process = self.processes.get("data"),
                 file_pattern = "output_DataC(.*).root",
-                prefix = "redirector.t2.ucsd.edu:1095/",
+                #prefix = "redirector.t2.ucsd.edu:1095/",
                 check_empty = False,
                 runPeriod = "2023"
             ),
             Dataset("Scouting2023D",
-                folder = "/store/user/ppradeep/Run3ScoutingOutput/LooperOutput2023/",
+                #folder = "/store/user/ppradeep/Run3ScoutingOutput/LooperOutput2023/",
+                folder = "/vols/cms/pb4918/StoreNTuple/SnTScouting/LooperOutput2023/",
                 process = self.processes.get("data"),
                 file_pattern = "output_DataD(.*).root",
-                prefix = "redirector.t2.ucsd.edu:1095/",
+                #prefix = "redirector.t2.ucsd.edu:1095/",
                 check_empty = False,
                 runPeriod = "2023"
             )
