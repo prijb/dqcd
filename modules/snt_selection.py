@@ -359,8 +359,16 @@ class SnTMakeDimuonsRDFProducer():
         df = df.Define("EventDimuonsBestPassDisplacement", "EventDimuonsPassDisplacement.at(EventDimuonsBestIdx)").Define("EventDimuonsBestPassMaterialVeto", "EventDimuonsPassMaterialVeto.at(EventDimuonsBestIdx)").Define("EventDimuonsBestPassExcessHits", "EventDimuonsPassExcessHits.at(EventDimuonsBestIdx)").Define("EventDimuonsBestPassPileupVeto", "EventDimuonsPassPileupVeto.at(EventDimuonsBestIdx)").Define("EventDimuonsBestPassKinematics", "EventDimuonsPassKinematics.at(EventDimuonsBestIdx)")
         #Get the reweighting variables
         df = df.Define("EventDimuonsBestSubleadingPt", "EventDimuons.subleading_pt.at(EventDimuonsBestIdx)").Define("EventDimuonsBestEta", "EventDimuons.dimuon_eta.at(EventDimuonsBestIdx)")
+        #Define N selections
+        df = df.Define("EventDimuonsBestPass", "(EventDimuonsBestPassDisplacement)&&(EventDimuonsBestPassMaterialVeto)&&(EventDimuonsBestPassExcessHits)&&(EventDimuonsBestPassPileupVeto)&&(EventDimuonsBestPassKinematics)")
+        #Define N-1 selections
+        df = df.Define("EventDimuonsBestPassMinusDisplacement", "(EventDimuonsBestPassMaterialVeto)&&(EventDimuonsBestPassExcessHits)&&(EventDimuonsBestPassPileupVeto)&&(EventDimuonsBestPassKinematics)")
+        df = df.Define("EventDimuonsBestPassMinusMaterialVeto", "(EventDimuonsBestPassDisplacement)&&(EventDimuonsBestPassExcessHits)&&(EventDimuonsBestPassPileupVeto)&&(EventDimuonsBestPassKinematics)")
+        df = df.Define("EventDimuonsBestPassMinusExcessHits", "(EventDimuonsBestPassDisplacement)&&(EventDimuonsBestPassMaterialVeto)&&(EventDimuonsBestPassPileupVeto)&&(EventDimuonsBestPassKinematics)")
+        df = df.Define("EventDimuonsBestPassMinusPileupVeto", "(EventDimuonsBestPassDisplacement)&&(EventDimuonsBestPassMaterialVeto)&&(EventDimuonsBestPassExcessHits)&&(EventDimuonsBestPassKinematics)")
+        df = df.Define("EventDimuonsBestPassMinusKinematics", "(EventDimuonsBestPassDisplacement)&&(EventDimuonsBestPassMaterialVeto)&&(EventDimuonsBestPassExcessHits)&&(EventDimuonsBestPassPileupVeto)")
         
-        return df, ["nDimuons", "EventDimuonsBestMass", "EventDimuonsBestLxy", "EventDimuonsBestSubleadingPt", "EventDimuonsBestEta", "EventDimuonsBestPassDisplacement", "EventDimuonsBestPassMaterialVeto", "EventDimuonsBestPassExcessHits", "EventDimuonsBestPassPileupVeto", "EventDimuonsBestPassKinematics"]
+        return df, ["nDimuons", "EventDimuonsBestMass", "EventDimuonsBestLxy", "EventDimuonsBestSubleadingPt", "EventDimuonsBestEta", "EventDimuonsBestPassDisplacement", "EventDimuonsBestPassMaterialVeto", "EventDimuonsBestPassExcessHits", "EventDimuonsBestPassPileupVeto", "EventDimuonsBestPassKinematics", "EventDimuonsBestPass", "EventDimuonsBestPassMinusDisplacement", "EventDimuonsBestPassMinusMaterialVeto", "EventDimuonsBestPassMinusExcessHits", "EventDimuonsBestPassMinusPileupVeto", "EventDimuonsBestPassMinusKinematics"]
 
 
 def SnTMakeDimuonsRDF(*args, **kwargs):
