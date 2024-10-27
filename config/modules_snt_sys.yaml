@@ -1,0 +1,13 @@
+dimuon_syst:
+    name: SnTMakeDimuonsRDF
+    path: modules.snt_selection
+    parameters:
+        runPeriod: self.dataset.runPeriod
+        isData: self.dataset.process.isData
+
+reweight_syst:
+    name: SnTDimuonsReweight
+    path: modules.snt_reweight
+    parameters:
+        runPeriod: self.dataset.runPeriod
+        isData: self.dataset.process.isData

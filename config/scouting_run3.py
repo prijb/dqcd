@@ -10,6 +10,14 @@ class Config(legacy_config):
     def add_datasets(self):
         self.tree_name = "tout"
         datasets = [
+            #MC
+            Dataset("DileptonMinBias",
+                folder = "/vols/cms/pb4918/StoreNTuple/SnTScouting/LooperOutputAllTrig/",
+                process = self.processes.get("DileptonMinBias"),
+                file_pattern = "output_DileptonMinBias(.*).root",
+                check_empty=False,
+                runPeriod = "2022"
+            ),
             #2022
             Dataset("Scouting2022B",
                 #folder = "/store/user/ppradeep/Run3ScoutingOutput/LooperOutput/",
@@ -204,9 +212,57 @@ class Config(legacy_config):
                 binning=(30, 2.8, 3.4),
                 x_title=Label("Dimuon mass"),
                 units="GeV"
+            ),
+            #Kinematic reweighting features
+            Feature("JpsiSubleadingPt", "EventDimuonsBestSubleadingPt",
+                selection="(EventDimuonsBestMass > 2.8) && (EventDimuonsBestMass < 3.3)",
+                binning=(50, 0, 50),
+                x_title=Label("Subleading muon pT"),
+                units="GeV"
+            ),
+            Feature("JpsiEta", "EventDimuonsBestEta",
+                selection="(EventDimuonsBestMass > 2.8) && (EventDimuonsBestMass < 3.3)",
+                binning=(50, -2.5, 2.5),
+                x_title=Label("Dimuon eta"),
+                units=""
+            ),
+            Feature("JpsiSubleadingPt2D", "EventDimuonsBestSubleadingPt",
+                selection="(EventDimuonsBestMass > 2.8) && (EventDimuonsBestMass < 3.3)",
+                binning=([0, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 45, 50]),
+                x_title=Label("Subleading muon pT"),
+                units="GeV"
+            ),
+            Feature("JpsiEta2D", "EventDimuonsBestEta",
+                selection="(EventDimuonsBestMass > 2.8) && (EventDimuonsBestMass < 3.3)",
+                binning=([-2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5]),
+                x_title=Label("Dimuon eta"),
+                units=""
+            ),
+            Feature("Kinematic", "kinematic",
+            binning = (100, 0.0, 50.0),
+            x_title = Label("Kinematic reweight"),
+            systematics=["kin"],
             )
         ]
         return ObjectCollection(features)
+
+    def add_systematics(self):
+        systematics = [
+            Systematic("kin", "")
+        ]
+
+        return ObjectCollection(systematics)
+
+    def add_weights(self):
+        weights = DotDict()
+        weights.default = "1"
+
+        weights.total_events_weights = []
+
+        weights.base = ["Kinematic"]
+
+        for category in self.categories:
+            weights[category.name] = weights.base
 
     
 
