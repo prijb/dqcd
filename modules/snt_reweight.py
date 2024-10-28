@@ -13,9 +13,9 @@ class SnTDimuonsReweightProducer():
         filename = "/vols/cms/pb4918/dqcd_analysis/Oct24/dqcd/data/NUM_Data_DEN_MC_subleading_pt_dimuon_eta_2022_syst.json"
 
         self.runPeriod = kwargs.pop("runPeriod")
-        self.isData = kwargs.pop("isData")
+        self.isMC = kwargs.pop("isMC")
 
-        if not self.isData:
+        if self.isMC:
             if "/libCorretionsWrapper.so" not in ROOT.gSystem.GetLibraries():
                 ROOT.gInterpreter.Load("libCorrectionsWrapper.so")
 
@@ -39,7 +39,7 @@ class SnTDimuonsReweightProducer():
                 """)
     
     def run(self, df):
-        if not self.isData:
+        if self.isMC:
             branches = ['kinematic', 'kinematic_up', 'kinematic_down']
             for branch_name, syst in zip(branches, ["sf", "systup", "systdown"]):
                 df = df.Define(branch_name, """get_snt_kinematic_reweight(EventDimuonsBestSubleadingPt, EventDimuonsBestEta, "%s")""" % syst)

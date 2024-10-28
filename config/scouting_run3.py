@@ -216,13 +216,13 @@ class Config(legacy_config):
             #Kinematic reweighting features
             Feature("JpsiSubleadingPt", "EventDimuonsBestSubleadingPt",
                 selection="(EventDimuonsBestMass > 2.8) && (EventDimuonsBestMass < 3.3)",
-                binning=(50, 0, 50),
+                binning=([0, 3, 5, 10, 15, 30, 50]),
                 x_title=Label("Subleading muon pT"),
                 units="GeV"
             ),
             Feature("JpsiEta", "EventDimuonsBestEta",
                 selection="(EventDimuonsBestMass > 2.8) && (EventDimuonsBestMass < 3.3)",
-                binning=(50, -2.5, 2.5),
+                binning=([-2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5]),
                 x_title=Label("Dimuon eta"),
                 units=""
             ),
@@ -239,9 +239,9 @@ class Config(legacy_config):
                 units=""
             ),
             Feature("Kinematic", "kinematic",
-            binning = (100, 0.0, 50.0),
-            x_title = Label("Kinematic reweight"),
-            systematics=["kin"],
+                binning = (100, 0.0, 50.0),
+                x_title = Label("Kinematic reweight"),
+                systematics=["kin"],
             )
         ]
         return ObjectCollection(features)
@@ -263,6 +263,8 @@ class Config(legacy_config):
 
         for category in self.categories:
             weights[category.name] = weights.base
+
+        return weights
 
     
 

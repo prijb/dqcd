@@ -489,7 +489,7 @@ class Config(cmt_config):
             Process("BToJpsiJPsiToMuMu", Label("BToJpsiJPsiToMuMu"), color=(0, 0, 0)),
             Process("BuToJpsiK", Label("BuToJpsiK"), color=(0, 0, 0)),
 
-            Process("DileptonMinBias", Label("DileptonMinBias"), color=(0, 0, 0), isData=False)
+            Process("DileptonMinBias", Label("DileptonMinBias"), color=(0, 0, 0), isData=False, isMC=True), 
         ]
 
         process_group_names = {

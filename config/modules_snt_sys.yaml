@@ -10,4 +10,4 @@ reweight_syst:
     path: modules.snt_reweight
     parameters:
         runPeriod: self.dataset.runPeriod
-        isData: self.dataset.process.isData
+        isMC: self.dataset.process.isMC
